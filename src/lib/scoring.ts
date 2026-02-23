@@ -181,7 +181,7 @@ export function calculateFullProximityScore(
   const scoreDriveDay = proximityScoreFromDriveTime(driveTimeDayMin);
   const scoreDriveNight = proximityScoreFromDriveTime(driveTimeNightMin);
 
-  // Weighted composite: 30% day drive + 20% night drive + 15% distance + 35% placeholder for future factors
+  // Weighted composite: 35% day drive + 25% night drive + 40% distance
   const proximityScore = Math.round(
     scoreDriveDay * 0.35 +
     scoreDriveNight * 0.25 +

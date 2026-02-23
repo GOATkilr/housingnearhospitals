@@ -81,3 +81,4 @@
 .score-bg-fair { background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); }
 .score-bg-moderate { background: linear-gradient(135deg, #FFF7ED 0%, #FED7AA 100%); }
 .score-bg-poor { background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%); }
+.score-bg-bad { background: linear-gradient(135deg, #FEE2E2 0%, #FCA5A5 100%); }

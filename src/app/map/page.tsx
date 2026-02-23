@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, MapPin, List } from "lucide-react";
+import { Building2, MapPin } from "lucide-react";
 import { SAMPLE_HOSPITALS } from "@/lib/sample-data";
 import { LAUNCH_METROS } from "@/lib/constants";
 import { HospitalCard } from "@/components/hospital/HospitalCard";
@@ -9,9 +9,8 @@ import { HospitalCard } from "@/components/hospital/HospitalCard";
 export default function MapPage() {
   const [selectedMetro, setSelectedMetro] = useState(LAUNCH_METROS[0].slug);
 
-  const metroId = `metro-${selectedMetro.split("-")[0]}`;
-  const hospitals = SAMPLE_HOSPITALS.filter((h) => h.metroId === metroId);
   const metro = LAUNCH_METROS.find((m) => m.slug === selectedMetro);
+  const hospitals = SAMPLE_HOSPITALS.filter((h) => h.metroId === metro?.metroId);
 
   return (
     <div className="min-h-screen bg-slate-50">

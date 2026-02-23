@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SAMPLE_HOSPITALS } from "@/lib/sample-data";
+import { getMetroBySlug } from "@/lib/constants";
 
 /**
  * GET /api/v1/hospitals
@@ -23,8 +24,10 @@ export async function GET(request: NextRequest) {
 
   // Filter by metro
   if (metro) {
-    const metroId = `metro-${metro.split("-")[0]}`;
-    results = results.filter((h) => h.metroId === metroId);
+    const metroData = getMetroBySlug(metro);
+    if (metroData) {
+      results = results.filter((h) => h.metroId === metroData.metroId);
+    }
   }
 
   // Search by name

@@ -39,6 +39,7 @@ export const SORT_OPTIONS = [
 
 export const LAUNCH_METROS = [
   {
+    metroId: "metro-nashville",
     slug: "nashville-tn",
     name: "Nashville, TN",
     stateCode: "TN",
@@ -49,6 +50,7 @@ export const LAUNCH_METROS = [
     tagline: "Music City's healthcare hub — HCA headquarters, Vanderbilt, and more",
   },
   {
+    metroId: "metro-houston",
     slug: "houston-tx",
     name: "Houston, TX",
     stateCode: "TX",
@@ -59,6 +61,7 @@ export const LAUNCH_METROS = [
     tagline: "Home to Texas Medical Center — the world's largest medical complex",
   },
   {
+    metroId: "metro-phoenix",
     slug: "phoenix-az",
     name: "Phoenix, AZ",
     stateCode: "AZ",
@@ -69,6 +72,16 @@ export const LAUNCH_METROS = [
     tagline: "Rapidly growing with Banner Health, Mayo Clinic, and HonorHealth",
   },
 ] as const;
+
+/** Find a LAUNCH_METRO by its metroId */
+export function getMetroById(metroId: string) {
+  return LAUNCH_METROS.find((m) => m.metroId === metroId);
+}
+
+/** Find a LAUNCH_METRO by its slug */
+export function getMetroBySlug(slug: string) {
+  return LAUNCH_METROS.find((m) => m.slug === slug);
+}
 
 // Map styles
 export const MAP_STYLE = "mapbox://styles/mapbox/light-v11";

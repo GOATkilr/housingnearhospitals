@@ -1,8 +1,5 @@
-"use client";
-
-import { useMemo } from "react";
+import { notFound } from "next/navigation";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import {
   Building2, MapPin, Bed, Star, Phone, Globe, AlertCircle,
   GraduationCap, ArrowLeft, ExternalLink
@@ -10,62 +7,71 @@ import {
 import { SAMPLE_HOSPITALS, SAMPLE_LISTINGS } from "@/lib/sample-data";
 import { LAUNCH_METROS } from "@/lib/constants";
 import { ListingCard } from "@/components/listing/ListingCard";
-import { ScoreRing } from "@/components/score/ScoreRing";
 import { calculateFullProximityScore } from "@/lib/scoring";
 import { formatNumber } from "@/lib/utils";
 import type { HospitalListingScore } from "@/types";
+import type { Metadata } from "next";
 
-export default function HospitalPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const hospitalSlug = params.hospitalSlug as string;
+interface HospitalPageProps {
+  params: { slug: string; hospitalSlug: string };
+}
+
+export async function generateStaticParams() {
+  return SAMPLE_HOSPITALS.map((hospital) => {
+    const metro = LAUNCH_METROS.find((m) => m.metroId === hospital.metroId);
+    return {
+      slug: metro?.slug ?? "",
+      hospitalSlug: hospital.slug,
+    };
+  }).filter((p) => p.slug);
+}
+
+export async function generateMetadata({ params }: HospitalPageProps): Promise<Metadata> {
+  const hospital = SAMPLE_HOSPITALS.find((h) => h.slug === params.hospitalSlug);
+  const metro = LAUNCH_METROS.find((m) => m.slug === params.slug);
+  if (!hospital || !metro) return {};
+  return {
+    title: `Housing Near ${hospital.name} | ${metro.name}`,
+    description: `Find apartments and housing near ${hospital.name} in ${metro.name}. Proximity-scored listings for healthcare workers, travel nurses, and residents.`,
+  };
+}
+
+export default function HospitalPage({ params }: HospitalPageProps) {
+  const { slug, hospitalSlug } = params;
 
   const metro = LAUNCH_METROS.find((m) => m.slug === slug);
   const hospital = SAMPLE_HOSPITALS.find((h) => h.slug === hospitalSlug);
 
-  const scoredListings = useMemo(() => {
-    if (!hospital || !metro) return [];
-
-    return SAMPLE_LISTINGS
-      .filter((l) => l.metroId === hospital.metroId)
-      .map((listing) => {
-        const scoreData = calculateFullProximityScore(
-          hospital.location.lat,
-          hospital.location.lng,
-          listing.location.lat,
-          listing.location.lng,
-          metro.circuityFactor
-        );
-
-        const score: HospitalListingScore = {
-          id: `${hospital.id}-${listing.id}`,
-          hospitalId: hospital.id,
-          listingId: listing.id,
-          straightLineMiles: scoreData.straightLineMiles,
-          estimatedDriveMiles: scoreData.estimatedDriveMiles,
-          driveTimeDayMin: scoreData.driveTimeDayMin,
-          driveTimeNightMin: scoreData.driveTimeNightMin,
-          proximityScore: scoreData.proximityScore,
-          calculationMethod: "haversine",
-        };
-
-        return { listing, score };
-      })
-      .sort((a, b) => b.score.proximityScore - a.score.proximityScore);
-  }, [hospital, metro]);
-
   if (!hospital || !metro) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-        <Building2 className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-        <h1 className="text-2xl font-bold text-slate-900">Hospital not found</h1>
-        <p className="text-slate-500 mt-2">This hospital doesn&apos;t exist in our database yet.</p>
-        <Link href={`/city/${slug}`} className="btn-primary inline-block mt-6">
-          Back to {metro?.name ?? "city"}
-        </Link>
-      </div>
-    );
+    notFound();
   }
+
+  const scoredListings = SAMPLE_LISTINGS
+    .filter((l) => l.metroId === hospital.metroId)
+    .map((listing) => {
+      const scoreData = calculateFullProximityScore(
+        hospital.location.lat,
+        hospital.location.lng,
+        listing.location.lat,
+        listing.location.lng,
+        metro.circuityFactor
+      );
+
+      const score: HospitalListingScore = {
+        id: `${hospital.id}-${listing.id}`,
+        hospitalId: hospital.id,
+        listingId: listing.id,
+        straightLineMiles: scoreData.straightLineMiles,
+        estimatedDriveMiles: scoreData.estimatedDriveMiles,
+        driveTimeDayMin: scoreData.driveTimeDayMin,
+        driveTimeNightMin: scoreData.driveTimeNightMin,
+        proximityScore: scoreData.proximityScore,
+        calculationMethod: "haversine",
+      };
+
+      return { listing, score };
+    })
+    .sort((a, b) => b.score.proximityScore - a.score.proximityScore);
 
   return (
     <div>

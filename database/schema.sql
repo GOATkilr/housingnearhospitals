@@ -133,7 +133,7 @@ CREATE TABLE listings (
     floor_number        SMALLINT,
 
     -- Pricing
-    price_monthly       INTEGER NOT NULL,                       -- Monthly rent in cents
+    price_monthly       INTEGER NOT NULL,                       -- Monthly rent in dollars
     price_deposit       INTEGER,
     price_application   INTEGER,
     currency            CHAR(3) DEFAULT 'USD',
@@ -402,9 +402,11 @@ CREATE OR REPLACE FUNCTION proximity_score_from_drive_time(
         WHEN drive_time_minutes <= 10 THEN 95
         WHEN drive_time_minutes <= 15 THEN 85
         WHEN drive_time_minutes <= 20 THEN 75
-        WHEN drive_time_minutes <= 30 THEN 60
-        WHEN drive_time_minutes <= 45 THEN 40
-        WHEN drive_time_minutes <= 60 THEN 25
+        WHEN drive_time_minutes <= 25 THEN 65
+        WHEN drive_time_minutes <= 30 THEN 55
+        WHEN drive_time_minutes <= 40 THEN 40
+        WHEN drive_time_minutes <= 50 THEN 30
+        WHEN drive_time_minutes <= 60 THEN 20
         WHEN drive_time_minutes <= 90 THEN 10
         ELSE 0
     END::SMALLINT;

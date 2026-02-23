@@ -12,13 +12,13 @@ export function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
-export function formatPrice(cents: number): string {
+export function formatPrice(dollars: number): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(cents);
+  }).format(dollars);
 }
 
 export function formatNumber(n: number): string {

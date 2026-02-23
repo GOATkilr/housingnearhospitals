@@ -1,37 +1,24 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { Building2, List, Map as MapIcon } from "lucide-react";
 import { SAMPLE_HOSPITALS, SAMPLE_LISTINGS } from "@/lib/sample-data";
-import { LAUNCH_METROS } from "@/lib/constants";
+import { getMetroById } from "@/lib/constants";
 import { HospitalSearch } from "@/components/search/HospitalSearch";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { ListingCard } from "@/components/listing/ListingCard";
-import { ScoreRing } from "@/components/score/ScoreRing";
 import { calculateFullProximityScore } from "@/lib/scoring";
 import type { Hospital, SearchFilters, HospitalListingScore } from "@/types";
 
 export default function SearchPage() {
-  const router = useRouter();
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [filters, setFilters] = useState<SearchFilters>({ sortBy: "score" });
   const [view, setView] = useState<"list" | "map">("list");
 
-  const metro = selectedHospital
-    ? LAUNCH_METROS.find((m) => {
-        const metroSlug = selectedHospital.metroId.replace("metro-", "");
-        return m.slug.startsWith(metroSlug);
-      })
-    : null;
-
   const scoredListings = useMemo(() => {
     if (!selectedHospital) return [];
 
-    const metroData = LAUNCH_METROS.find((m) => {
-      const metroSlug = selectedHospital.metroId.replace("metro-", "");
-      return m.slug.startsWith(metroSlug);
-    });
+    const metroData = getMetroById(selectedHospital.metroId);
 
     let results = SAMPLE_LISTINGS
       .filter((l) => l.metroId === selectedHospital.metroId)

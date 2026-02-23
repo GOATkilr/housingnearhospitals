@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, MapPin, Star, ArrowRight, Shield, Clock, TrendingUp } from "lucide-react";
-import { SITE_NAME, SITE_TAGLINE, LAUNCH_METROS } from "@/lib/constants";
+import { SITE_TAGLINE, LAUNCH_METROS, getMetroById } from "@/lib/constants";
 import { SAMPLE_HOSPITALS } from "@/lib/sample-data";
 import { HospitalSearch } from "@/components/search/HospitalSearch";
 import Link from "next/link";
@@ -31,13 +30,10 @@ export default function HomePage() {
               <HospitalSearch
                 hospitals={SAMPLE_HOSPITALS}
                 onSelect={(hospital) => {
-                  const metro = LAUNCH_METROS.find((m) =>
-                    SAMPLE_HOSPITALS.find(
-                      (h) => h.id === hospital.id && h.metroId === `metro-${m.slug.replace("-", "-").split("-")[0]}`
-                    )
-                  );
-                  const metroSlug = hospital.metroId.replace("metro-", "");
-                  router.push(`/city/${metroSlug}/${hospital.slug}`);
+                  const metro = getMetroById(hospital.metroId);
+                  if (metro) {
+                    router.push(`/city/${metro.slug}/${hospital.slug}`);
+                  }
                 }}
                 placeholder="Search by hospital name (e.g., Vanderbilt, Houston Methodist...)"
               />

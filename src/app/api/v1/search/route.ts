@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SAMPLE_HOSPITALS, SAMPLE_LISTINGS } from "@/lib/sample-data";
-import { LAUNCH_METROS } from "@/lib/constants";
+import { getMetroById } from "@/lib/constants";
 import { calculateFullProximityScore, calculateCombinedScore } from "@/lib/scoring";
 
 /**
@@ -39,8 +39,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const metroSlug = hospital.metroId.replace("metro-", "");
-  const metro = LAUNCH_METROS.find((m) => m.slug.startsWith(metroSlug));
+  const metro = getMetroById(hospital.metroId);
   const circuityFactor = metro?.circuityFactor ?? 1.3;
 
   // Parse filters
