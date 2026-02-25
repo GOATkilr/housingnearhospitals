@@ -7,7 +7,7 @@ import { LAUNCH_METROS } from "@/lib/constants";
 import { HospitalCard } from "@/components/hospital/HospitalCard";
 
 export default function MapPage() {
-  const [selectedMetro, setSelectedMetro] = useState(LAUNCH_METROS[0].slug);
+  const [selectedMetro, setSelectedMetro] = useState<string>(LAUNCH_METROS[0].slug);
 
   const metro = LAUNCH_METROS.find((m) => m.slug === selectedMetro);
   const hospitals = SAMPLE_HOSPITALS.filter((h) => h.metroId === metro?.metroId);
