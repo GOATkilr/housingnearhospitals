@@ -17,7 +17,7 @@ export function ListingCard({ listing, score, className }: ListingCardProps) {
   const displayScore = score?.proximityScore ?? listing.listingQualityScore ?? 0;
 
   return (
-    <div className={cn("bg-white rounded-xl border border-slate-200 overflow-hidden card-hover", className)}>
+    <div className={cn("bg-white rounded-brand border border-gray-200 overflow-hidden card-hover", className)}>
       {/* Image */}
       <div className="relative h-48 bg-slate-100">
         {listing.primaryImageUrl ? (
@@ -33,9 +33,9 @@ export function ListingCard({ listing, score, className }: ListingCardProps) {
 
         {/* Price overlay */}
         <div className="absolute bottom-3 left-3">
-          <span className="bg-slate-900/80 text-white px-3 py-1.5 rounded-lg text-lg font-bold backdrop-blur-sm">
+          <span className="bg-brand-navy/80 text-white px-3 py-1.5 rounded-lg text-lg font-bold backdrop-blur-sm">
             {formatPrice(listing.priceMonthly)}
-            <span className="text-sm font-normal text-slate-300">/mo</span>
+            <span className="text-sm font-normal text-gray-300">/mo</span>
           </span>
         </div>
 
@@ -55,7 +55,7 @@ export function ListingCard({ listing, score, className }: ListingCardProps) {
             </span>
           )}
           {listing.isFurnished && (
-            <span className="bg-brand-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+            <span className="bg-brand-blue text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
               Furnished
             </span>
           )}
@@ -65,10 +65,10 @@ export function ListingCard({ listing, score, className }: ListingCardProps) {
       {/* Content */}
       <div className="p-4">
         {/* Title */}
-        <h3 className="font-semibold text-slate-900 line-clamp-1">{listing.title}</h3>
+        <h3 className="font-semibold text-brand-navy line-clamp-1">{listing.title}</h3>
 
         {/* Unit details */}
-        <div className="flex items-center gap-3 mt-2 text-sm text-slate-500">
+        <div className="flex items-center gap-3 mt-2 text-sm text-brand-slate">
           <span className="flex items-center gap-1">
             <Bed className="w-4 h-4" />
             {listing.bedrooms === 0 ? "Studio" : `${listing.bedrooms} bed`}
@@ -107,7 +107,7 @@ export function ListingCard({ listing, score, className }: ListingCardProps) {
 
         {/* Commute bar (if score provided) */}
         {score && (
-          <div className="mt-3 pt-3 border-t border-slate-100">
+          <div className="mt-3 pt-3 border-t border-gray-100">
             <CommuteBar
               driveTimeDayMin={score.driveTimeDayMin ?? 0}
               driveTimeNightMin={score.driveTimeNightMin ?? 0}

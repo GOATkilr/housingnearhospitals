@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div>
-      <section className="bg-gradient-to-b from-brand-900 to-brand-800 text-white py-16">
+      <section className="bg-brand-navy text-white py-16">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h1 className="text-3xl sm:text-4xl font-bold">Contact Us</h1>
           <p className="mt-4 text-blue-200 text-lg">
@@ -21,10 +21,10 @@ export default function ContactPage() {
 
       <section className="py-16">
         <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-xl border border-slate-200 p-8 space-y-6">
+          <div className="bg-white rounded-brand border border-gray-200 p-8 space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center">
-                <Mail className="w-5 h-5 text-brand-700" />
+              <div className="w-10 h-10 bg-brand-light rounded-lg flex items-center justify-center">
+                <Mail className="w-5 h-5 text-brand-blue" />
               </div>
               <div>
                 <h2 className="font-semibold text-slate-900">Email</h2>
@@ -42,7 +42,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <hr className="border-slate-200" />
+            <hr className="border-gray-200" />
 
             <div>
               <h3 className="font-semibold text-slate-900 mb-2">For Healthcare Workers</h3>

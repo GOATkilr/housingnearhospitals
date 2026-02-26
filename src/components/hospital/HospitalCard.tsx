@@ -17,23 +17,23 @@ export function HospitalCard({ hospital, metroSlug, className }: HospitalCardPro
     <Link
       href={`/city/${metroSlug}/${hospital.slug}`}
       className={cn(
-        "block bg-white rounded-xl border border-slate-200 p-5 card-hover",
+        "block bg-white rounded-brand border border-gray-200 p-5 card-hover",
         className
       )}
     >
       <div className="flex items-start gap-4">
         {/* Icon */}
-        <div className="w-12 h-12 bg-brand-50 rounded-lg flex items-center justify-center flex-shrink-0">
-          <Building2 className="w-6 h-6 text-brand-700" />
+        <div className="w-12 h-12 bg-brand-light rounded-brand flex items-center justify-center flex-shrink-0">
+          <Building2 className="w-6 h-6 text-brand-blue" />
         </div>
 
         <div className="flex-1 min-w-0">
           {/* Name */}
-          <h3 className="font-semibold text-slate-900 truncate">{hospital.name}</h3>
+          <h3 className="font-semibold text-brand-navy truncate">{hospital.name}</h3>
 
           {/* System name */}
           {hospital.systemName && (
-            <p className="text-sm text-slate-500 mt-0.5">{hospital.systemName}</p>
+            <p className="text-sm text-brand-slate mt-0.5">{hospital.systemName}</p>
           )}
 
           {/* Meta row */}
@@ -43,7 +43,7 @@ export function HospitalCard({ hospital, metroSlug, className }: HospitalCardPro
 
             {/* Bed count */}
             {hospital.bedCount && (
-              <span className="flex items-center gap-1 text-xs text-slate-500">
+              <span className="flex items-center gap-1 text-xs text-brand-slate">
                 <Bed className="w-3.5 h-3.5" />
                 {formatNumber(hospital.bedCount)} beds
               </span>

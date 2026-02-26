@@ -41,9 +41,9 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-brand-light">
       {/* Admin Header */}
-      <div className="bg-white border-b border-slate-200">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -70,7 +70,7 @@ export default function AdminDashboard() {
         {/* Stats Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((stat) => (
-            <div key={stat.label} className="bg-white rounded-xl border border-slate-200 p-5">
+            <div key={stat.label} className="bg-white rounded-brand border border-gray-200 p-5">
               <div className="flex items-center justify-between">
                 <div className={`w-10 h-10 ${stat.bg} rounded-lg flex items-center justify-center`}>
                   <stat.icon className={`w-5 h-5 ${stat.color}`} />
@@ -134,9 +134,9 @@ export default function AdminDashboard() {
 
         {/* Recent Activity (placeholder) */}
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Data Pipeline Status</h2>
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-white rounded-brand border border-gray-200 overflow-hidden">
           <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-brand-light border-b border-gray-200">
               <tr>
                 <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">Source</th>
                 <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">Type</th>
@@ -175,17 +175,17 @@ function AdminCard({
   return (
     <Link
       href={href}
-      className="bg-white rounded-xl border border-slate-200 p-5 card-hover block"
+      className="bg-white rounded-brand border border-gray-200 p-5 card-hover block"
     >
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center">
-          <Icon className="w-5 h-5 text-brand-700" />
+        <div className="w-10 h-10 bg-brand-light rounded-lg flex items-center justify-center">
+          <Icon className="w-5 h-5 text-brand-blue" />
         </div>
         <h3 className="font-semibold text-slate-900">{title}</h3>
       </div>
       <p className="text-sm text-slate-500">{description}</p>
       {stats && (
-        <p className="text-xs text-brand-600 font-medium mt-3">{stats}</p>
+        <p className="text-xs text-brand-blue font-medium mt-3">{stats}</p>
       )}
     </Link>
   );

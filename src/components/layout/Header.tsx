@@ -9,15 +9,15 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 bg-brand-800 rounded-lg flex items-center justify-center group-hover:bg-brand-700 transition-colors">
+            <div className="w-9 h-9 bg-brand-navy rounded-brand flex items-center justify-center group-hover:bg-brand-blue transition-colors">
               <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-lg text-slate-900 hidden sm:block">
+            <span className="font-bold text-lg text-brand-navy hidden sm:block">
               {SITE_NAME}
             </span>
           </Link>
@@ -28,14 +28,14 @@ export function Header() {
               <Link
                 key={metro.slug}
                 href={`/city/${metro.slug}`}
-                className="px-3 py-2 text-sm text-slate-600 hover:text-brand-800 hover:bg-brand-50 rounded-lg transition-colors"
+                className="px-3 py-2 text-sm text-brand-slate hover:text-brand-blue hover:bg-brand-light rounded-lg transition-colors"
               >
                 {metro.name}
               </Link>
             ))}
             <Link
               href="/map"
-              className="px-3 py-2 text-sm text-slate-600 hover:text-brand-800 hover:bg-brand-50 rounded-lg transition-colors flex items-center gap-1.5"
+              className="px-3 py-2 text-sm text-brand-slate hover:text-brand-blue hover:bg-brand-light rounded-lg transition-colors flex items-center gap-1.5"
             >
               <MapPin className="w-4 h-4" />
               Map
@@ -46,7 +46,7 @@ export function Header() {
           <div className="flex items-center gap-3">
             <Link
               href="/search"
-              className="p-2 text-slate-500 hover:text-brand-800 hover:bg-brand-50 rounded-lg transition-colors"
+              className="p-2 text-brand-slate hover:text-brand-blue hover:bg-brand-light rounded-lg transition-colors"
               aria-label="Search hospitals"
             >
               <Search className="w-5 h-5" />
@@ -58,7 +58,7 @@ export function Header() {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-2 text-slate-500 hover:text-slate-700"
+              className="md:hidden p-2 text-brand-slate hover:text-brand-navy"
               aria-label="Toggle menu"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -68,13 +68,13 @@ export function Header() {
 
         {/* Mobile Nav */}
         {mobileOpen && (
-          <div className="md:hidden pb-4 border-t border-slate-100 mt-2 pt-4">
+          <div className="md:hidden pb-4 border-t border-gray-100 mt-2 pt-4">
             <div className="flex flex-col gap-1">
               {LAUNCH_METROS.map((metro) => (
                 <Link
                   key={metro.slug}
                   href={`/city/${metro.slug}`}
-                  className="px-3 py-2.5 text-sm text-slate-600 hover:text-brand-800 hover:bg-brand-50 rounded-lg"
+                  className="px-3 py-2.5 text-sm text-brand-slate hover:text-brand-blue hover:bg-brand-light rounded-lg"
                   onClick={() => setMobileOpen(false)}
                 >
                   {metro.name}
@@ -82,7 +82,7 @@ export function Header() {
               ))}
               <Link
                 href="/map"
-                className="px-3 py-2.5 text-sm text-slate-600 hover:text-brand-800 hover:bg-brand-50 rounded-lg flex items-center gap-1.5"
+                className="px-3 py-2.5 text-sm text-brand-slate hover:text-brand-blue hover:bg-brand-light rounded-lg flex items-center gap-1.5"
                 onClick={() => setMobileOpen(false)}
               >
                 <MapPin className="w-4 h-4" />

@@ -30,17 +30,17 @@ export function FilterPanel({ filters, onChange, className }: FilterPanelProps) 
   ].filter(Boolean).length;
 
   return (
-    <div className={cn("bg-white rounded-xl border border-slate-200", className)}>
+    <div className={cn("bg-white rounded-brand border border-gray-200", className)}>
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between px-4 py-3"
       >
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-slate-500" />
+          <SlidersHorizontal className="w-4 h-4 text-brand-slate" />
           <span className="font-medium text-sm">Filters</span>
           {activeFilterCount > 0 && (
-            <span className="bg-brand-100 text-brand-800 text-xs font-medium px-2 py-0.5 rounded-full">
+            <span className="bg-blue-50 text-brand-blue text-xs font-medium px-2 py-0.5 rounded-full">
               {activeFilterCount}
             </span>
           )}
@@ -54,10 +54,10 @@ export function FilterPanel({ filters, onChange, className }: FilterPanelProps) 
       </button>
 
       {isExpanded && (
-        <div className="px-4 pb-4 space-y-4 border-t border-slate-100 pt-4">
+        <div className="px-4 pb-4 space-y-4 border-t border-gray-100 pt-4">
           {/* Sort */}
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1.5">Sort by</label>
+            <label className="block text-xs font-medium text-brand-slate mb-1.5">Sort by</label>
             <select
               value={filters.sortBy ?? "score"}
               onChange={(e) => update({ sortBy: e.target.value as SearchFilters["sortBy"] })}
@@ -73,7 +73,7 @@ export function FilterPanel({ filters, onChange, className }: FilterPanelProps) 
 
           {/* Price range */}
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1.5">Max price</label>
+            <label className="block text-xs font-medium text-brand-slate mb-1.5">Max price</label>
             <select
               value={filters.maxPrice ?? ""}
               onChange={(e) => update({ maxPrice: e.target.value ? Number(e.target.value) : undefined })}
@@ -90,7 +90,7 @@ export function FilterPanel({ filters, onChange, className }: FilterPanelProps) 
 
           {/* Bedrooms */}
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1.5">Bedrooms</label>
+            <label className="block text-xs font-medium text-brand-slate mb-1.5">Bedrooms</label>
             <div className="flex gap-1.5">
               {[
                 { value: undefined, label: "Any" },
@@ -105,8 +105,8 @@ export function FilterPanel({ filters, onChange, className }: FilterPanelProps) 
                   className={cn(
                     "flex-1 py-1.5 text-xs font-medium rounded-lg border transition-colors",
                     filters.minBedrooms === opt.value
-                      ? "bg-brand-50 border-brand-300 text-brand-800"
-                      : "border-slate-200 text-slate-500 hover:border-slate-300"
+                      ? "bg-blue-50 border-brand-blue text-brand-navy"
+                      : "border-gray-200 text-brand-slate hover:border-gray-300"
                   )}
                 >
                   {opt.label}
@@ -117,7 +117,7 @@ export function FilterPanel({ filters, onChange, className }: FilterPanelProps) 
 
           {/* Min score */}
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1.5">
+            <label className="block text-xs font-medium text-brand-slate mb-1.5">
               Min proximity score: {filters.minScore ?? 0}
             </label>
             <input
@@ -127,7 +127,7 @@ export function FilterPanel({ filters, onChange, className }: FilterPanelProps) 
               step={5}
               value={filters.minScore ?? 0}
               onChange={(e) => update({ minScore: Number(e.target.value) || undefined })}
-              className="w-full accent-brand-600"
+              className="w-full accent-brand-blue"
             />
           </div>
 
@@ -183,14 +183,14 @@ function Toggle({
 }) {
   return (
     <label className="flex items-center justify-between cursor-pointer group">
-      <span className="text-sm text-slate-600 group-hover:text-slate-900">{label}</span>
+      <span className="text-sm text-brand-slate group-hover:text-brand-navy">{label}</span>
       <button
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
         className={cn(
           "relative w-9 h-5 rounded-full transition-colors",
-          checked ? "bg-brand-600" : "bg-slate-300"
+          checked ? "bg-brand-blue" : "bg-slate-300"
         )}
       >
         <span

@@ -8,8 +8,8 @@ import { formatPrice } from "@/lib/utils";
 
 export default function AdminListingsPage() {
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="bg-white border-b border-slate-200">
+    <div className="min-h-screen bg-brand-light">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Link href="/admin" className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-3">
             <ArrowLeft className="w-4 h-4" />
@@ -29,9 +29,9 @@ export default function AdminListingsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-white rounded-brand border border-gray-200 overflow-hidden">
           <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-brand-light border-b border-gray-200">
               <tr>
                 <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">Listing</th>
                 <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">Metro</th>
@@ -56,7 +56,7 @@ export default function AdminListingsPage() {
                     <td className="px-4 py-3 text-sm text-slate-900 font-medium">{formatPrice(l.priceMonthly)}</td>
                     <td className="px-4 py-3 text-sm text-slate-600 capitalize">{l.propertyType}</td>
                     <td className="px-4 py-3">
-                      <span className={`badge ${l.isFurnished ? "bg-brand-100 text-brand-800" : "bg-slate-100 text-slate-600"}`}>
+                      <span className={`badge ${l.isFurnished ? "bg-blue-50 text-brand-navy" : "bg-slate-100 text-slate-600"}`}>
                         {l.isFurnished ? "Yes" : "No"}
                       </span>
                     </td>

@@ -85,11 +85,11 @@ export default function SearchPage() {
   }, [selectedHospital, filters]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white">
       {/* Search Header */}
-      <div className="bg-white border-b border-slate-200 py-6">
+      <div className="bg-white border-b border-gray-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-slate-900 mb-4">Find housing near your hospital</h1>
+          <h1 className="text-2xl font-bold mb-4">Find housing near your hospital</h1>
           <HospitalSearch
             hospitals={SAMPLE_HOSPITALS}
             onSelect={(h) => setSelectedHospital(h)}
@@ -104,16 +104,16 @@ export default function SearchPage() {
             {/* Sidebar */}
             <div className="space-y-4">
               {/* Selected hospital summary */}
-              <div className="bg-white rounded-xl border border-slate-200 p-4">
+              <div className="bg-white rounded-brand border border-gray-200 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center">
-                    <Building2 className="w-5 h-5 text-brand-700" />
+                  <div className="w-10 h-10 bg-brand-light rounded-brand flex items-center justify-center">
+                    <Building2 className="w-5 h-5 text-brand-blue" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm text-slate-900 line-clamp-1">
+                    <p className="font-semibold text-sm text-brand-navy line-clamp-1">
                       {selectedHospital.name}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-brand-slate">
                       {selectedHospital.city}, {selectedHospital.stateCode}
                     </p>
                   </div>
@@ -127,20 +127,20 @@ export default function SearchPage() {
             <div>
               {/* Results header */}
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-slate-600">
-                  <strong>{scoredListings.length}</strong> listings near{" "}
-                  <strong>{selectedHospital.name}</strong>
+                <p className="text-sm text-brand-slate">
+                  <strong className="text-brand-navy">{scoredListings.length}</strong> listings near{" "}
+                  <strong className="text-brand-navy">{selectedHospital.name}</strong>
                 </p>
-                <div className="flex items-center gap-1 bg-white rounded-lg border border-slate-200 p-1">
+                <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1">
                   <button
                     onClick={() => setView("list")}
-                    className={`p-1.5 rounded ${view === "list" ? "bg-brand-50 text-brand-700" : "text-slate-400"}`}
+                    className={`p-1.5 rounded ${view === "list" ? "bg-brand-light text-brand-blue" : "text-slate-400"}`}
                   >
                     <List className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setView("map")}
-                    className={`p-1.5 rounded ${view === "map" ? "bg-brand-50 text-brand-700" : "text-slate-400"}`}
+                    className={`p-1.5 rounded ${view === "map" ? "bg-brand-light text-brand-blue" : "text-slate-400"}`}
                   >
                     <MapIcon className="w-4 h-4" />
                   </button>
@@ -154,9 +154,9 @@ export default function SearchPage() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-20 bg-white rounded-xl border border-slate-200">
+                <div className="text-center py-20 bg-white rounded-brand border border-gray-200">
                   <Building2 className="w-10 h-10 mx-auto mb-3 text-slate-300" />
-                  <p className="text-slate-500">No listings match your filters.</p>
+                  <p className="text-brand-slate">No listings match your filters.</p>
                   <p className="text-sm text-slate-400 mt-1">Try adjusting your filters or searching a different hospital.</p>
                 </div>
               )}
@@ -165,11 +165,11 @@ export default function SearchPage() {
         ) : (
           /* Empty state */
           <div className="text-center py-24">
-            <div className="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Building2 className="w-8 h-8 text-brand-400" />
+            <div className="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-4">
+              <Building2 className="w-8 h-8 text-brand-blue" />
             </div>
-            <h2 className="text-xl font-semibold text-slate-900">Search for a hospital</h2>
-            <p className="text-slate-500 mt-2 max-w-md mx-auto">
+            <h2 className="text-xl font-semibold">Search for a hospital</h2>
+            <p className="text-brand-slate mt-2 max-w-md mx-auto">
               Start by selecting the hospital where you work or will be working.
               We&apos;ll show you all nearby housing scored by commute time.
             </p>

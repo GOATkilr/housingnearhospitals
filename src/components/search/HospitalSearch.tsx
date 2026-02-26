@@ -38,7 +38,7 @@ export function HospitalSearch({
     <div className={cn("relative", className)}>
       {/* Search input */}
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-brand-slate" />
         <input
           type="text"
           value={query}
@@ -48,9 +48,9 @@ export function HospitalSearch({
           }}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-300 bg-white
-                     text-lg focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20
-                     focus:outline-none transition-all shadow-sm"
+          className="w-full pl-12 pr-4 py-3.5 rounded-brand border border-gray-200 bg-white
+                     text-lg text-brand-navy focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20
+                     focus:outline-none transition-all"
         />
       </div>
 
@@ -61,7 +61,7 @@ export function HospitalSearch({
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-slate-200 shadow-xl z-20 max-h-96 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-brand border border-gray-200 shadow-lg z-20 max-h-96 overflow-y-auto">
             {filtered.map((hospital) => (
               <button
                 key={hospital.id}
@@ -70,16 +70,16 @@ export function HospitalSearch({
                   setQuery(hospital.name);
                   setIsOpen(false);
                 }}
-                className="w-full px-4 py-3 flex items-start gap-3 hover:bg-brand-50 transition-colors text-left border-b border-slate-100 last:border-b-0"
+                className="w-full px-4 py-3 flex items-start gap-3 hover:bg-brand-light transition-colors text-left border-b border-gray-100 last:border-b-0"
               >
-                <div className="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Building2 className="w-5 h-5 text-brand-700" />
+                <div className="w-10 h-10 bg-brand-light rounded-brand flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Building2 className="w-5 h-5 text-brand-blue" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-slate-900 truncate">{hospital.name}</p>
+                  <p className="font-medium text-brand-navy truncate">{hospital.name}</p>
                   <div className="flex items-center gap-2 mt-0.5">
                     {hospital.systemName && (
-                      <span className="text-xs text-slate-500">{hospital.systemName}</span>
+                      <span className="text-xs text-brand-slate">{hospital.systemName}</span>
                     )}
                     <span className="flex items-center gap-0.5 text-xs text-slate-400">
                       <MapPin className="w-3 h-3" />

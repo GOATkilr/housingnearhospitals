@@ -4,13 +4,13 @@ import { SITE_NAME, SITE_TAGLINE, LAUNCH_METROS } from "@/lib/constants";
 
 export function Footer() {
   return (
-    <footer className="bg-slate-900 text-slate-400">
+    <footer className="bg-brand-navy text-slate-400">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-brand-blue rounded-brand flex items-center justify-center">
                 <Building2 className="w-4 h-4 text-white" />
               </div>
               <span className="font-bold text-white">{SITE_NAME}</span>
@@ -80,7 +80,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-slate-800 mt-10 pt-6 text-sm text-center">
+        <div className="border-t border-white/10 mt-10 pt-6 text-sm text-center">
           &copy; {new Date().getFullYear()} {SITE_NAME}. Built for healthcare workers.
         </div>
       </div>

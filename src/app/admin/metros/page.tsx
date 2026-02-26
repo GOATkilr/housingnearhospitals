@@ -7,8 +7,8 @@ import { formatNumber, formatPrice } from "@/lib/utils";
 
 export default function AdminMetrosPage() {
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="bg-white border-b border-slate-200">
+    <div className="min-h-screen bg-brand-light">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Link href="/admin" className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-3">
             <ArrowLeft className="w-4 h-4" />
@@ -25,11 +25,11 @@ export default function AdminMetrosPage() {
             const hospitalCount = SAMPLE_HOSPITALS.filter((h) => h.metroId === metro.id).length;
             const listingCount = SAMPLE_LISTINGS.filter((l) => l.metroId === metro.id).length;
             return (
-              <div key={metro.id} className="bg-white rounded-xl border border-slate-200 p-6">
+              <div key={metro.id} className="bg-white rounded-brand border border-gray-200 p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-brand-700" />
+                    <div className="w-10 h-10 bg-brand-light rounded-lg flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-brand-blue" />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-slate-900">{metro.name}</h3>

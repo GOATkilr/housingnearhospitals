@@ -53,17 +53,17 @@ export default function ListingPage({ params }: ListingPageProps) {
   return (
     <div>
       {/* Header */}
-      <section className="bg-gradient-to-b from-brand-900 to-brand-800 text-white py-10">
+      <section className="bg-brand-navy text-white py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/search"
-            className="flex items-center gap-1.5 text-blue-300 hover:text-white text-sm mb-4 transition-colors"
+            className="flex items-center gap-1.5 text-gray-300 hover:text-white text-sm mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Search
           </Link>
-          <h1 className="text-2xl sm:text-3xl font-bold">{listing.title}</h1>
-          <div className="flex items-center gap-2 mt-2 text-blue-300 text-sm">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">{listing.title}</h1>
+          <div className="flex items-center gap-2 mt-2 text-gray-300 text-sm">
             <MapPin className="w-4 h-4" />
             <span>{listing.address}, {listing.city}, {listing.stateCode} {listing.zipCode}</span>
           </div>
@@ -75,15 +75,15 @@ export default function ListingPage({ params }: ListingPageProps) {
           {/* Main content */}
           <div className="space-y-6">
             {/* Image placeholder */}
-            <div className="bg-slate-100 rounded-xl h-72 flex items-center justify-center">
+            <div className="bg-brand-light rounded-brand h-72 flex items-center justify-center">
               <Building2 className="w-16 h-16 text-slate-300" />
             </div>
 
             {/* Details */}
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <div className="bg-white rounded-brand border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-3xl font-bold text-slate-900">
-                  {formatPrice(listing.priceMonthly)}<span className="text-base font-normal text-slate-500">/mo</span>
+                <span className="text-3xl font-bold text-brand-navy">
+                  {formatPrice(listing.priceMonthly)}<span className="text-base font-normal text-brand-slate">/mo</span>
                 </span>
                 <div className="flex gap-2">
                   {listing.isVerified && (
@@ -92,12 +92,12 @@ export default function ListingPage({ params }: ListingPageProps) {
                     </span>
                   )}
                   {listing.isFurnished && (
-                    <span className="badge bg-brand-100 text-brand-800">Furnished</span>
+                    <span className="badge bg-blue-50 text-brand-blue">Furnished</span>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 text-sm text-slate-600 mb-4">
+              <div className="flex items-center gap-4 text-sm text-brand-slate mb-4">
                 <span className="flex items-center gap-1">
                   <Bed className="w-4 h-4" />
                   {listing.bedrooms === 0 ? "Studio" : `${listing.bedrooms} bed`}
@@ -140,24 +140,24 @@ export default function ListingPage({ params }: ListingPageProps) {
               </div>
 
               {listing.description && (
-                <p className="text-slate-600 text-sm leading-relaxed">{listing.description}</p>
+                <p className="text-brand-slate text-sm leading-relaxed">{listing.description}</p>
               )}
             </div>
           </div>
 
           {/* Sidebar: Nearby hospitals */}
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900">Nearby Hospitals</h2>
+            <h2 className="text-lg font-semibold">Nearby Hospitals</h2>
             {nearbyHospitals.map(({ hospital, scoreData }) => (
               <Link
                 key={hospital.id}
                 href={`/city/${metro?.slug ?? ""}/${hospital.slug}`}
-                className="block bg-white rounded-xl border border-slate-200 p-4 card-hover"
+                className="block bg-white rounded-brand border border-gray-200 p-4 card-hover"
               >
                 <div className="flex items-start gap-3">
                   <ScoreRing score={scoreData.proximityScore} size="sm" />
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-slate-900 line-clamp-1">{hospital.name}</p>
+                    <p className="font-semibold text-sm text-brand-navy line-clamp-1">{hospital.name}</p>
                     <CommuteBar
                       driveTimeDayMin={scoreData.driveTimeDayMin}
                       driveTimeNightMin={scoreData.driveTimeNightMin}

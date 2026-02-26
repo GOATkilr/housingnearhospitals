@@ -8,16 +8,10 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          50: "#EFF6FF",
-          100: "#DBEAFE",
-          200: "#BFDBFE",
-          300: "#93C5FD",
-          400: "#60A5FA",
-          500: "#3B82F6",
-          600: "#2563EB",
-          700: "#1D4ED8",
-          800: "#1E40AF",
-          900: "#1E3A8A",
+          navy: "#0F2137",
+          blue: "#3F78B4",
+          slate: "#4A5568",
+          light: "#F8F9FA",
         },
         score: {
           excellent: "#059669",
@@ -30,6 +24,12 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
+      },
+      borderRadius: {
+        brand: "12px",
+      },
+      spacing: {
+        section: "80px",
       },
     },
   },

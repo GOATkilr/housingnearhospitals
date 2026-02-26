@@ -76,11 +76,11 @@ export default function HospitalPage({ params }: HospitalPageProps) {
   return (
     <div>
       {/* Breadcrumb + Hospital Header */}
-      <section className="bg-gradient-to-b from-brand-900 to-brand-800 text-white py-12">
+      <section className="bg-brand-navy text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href={`/city/${slug}`}
-            className="flex items-center gap-1.5 text-blue-300 hover:text-white text-sm mb-4 transition-colors"
+            className="flex items-center gap-1.5 text-gray-300 hover:text-white text-sm mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             {metro.name} Hospitals
@@ -89,13 +89,13 @@ export default function HospitalPage({ params }: HospitalPageProps) {
           <div className="flex flex-col md:flex-row md:items-start gap-6">
             {/* Hospital info */}
             <div className="flex-1">
-              <h1 className="text-2xl sm:text-3xl font-bold">{hospital.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">{hospital.name}</h1>
 
               {hospital.systemName && (
-                <p className="text-blue-200 mt-1">{hospital.systemName}</p>
+                <p className="text-gray-300 mt-1">{hospital.systemName}</p>
               )}
 
-              <div className="flex items-center gap-2 mt-3 text-sm text-blue-300">
+              <div className="flex items-center gap-2 mt-3 text-sm text-gray-300">
                 <MapPin className="w-4 h-4" />
                 <span>{hospital.address}, {hospital.city}, {hospital.stateCode} {hospital.zipCode}</span>
               </div>
@@ -132,13 +132,13 @@ export default function HospitalPage({ params }: HospitalPageProps) {
               {/* Contact */}
               <div className="flex flex-wrap gap-4 mt-4 text-sm">
                 {hospital.phone && (
-                  <a href={`tel:${hospital.phone}`} className="flex items-center gap-1.5 text-blue-200 hover:text-white">
+                  <a href={`tel:${hospital.phone}`} className="flex items-center gap-1.5 text-gray-300 hover:text-white">
                     <Phone className="w-4 h-4" />
                     {hospital.phone}
                   </a>
                 )}
                 {hospital.website && (
-                  <a href={hospital.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-blue-200 hover:text-white">
+                  <a href={hospital.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-gray-300 hover:text-white">
                     <Globe className="w-4 h-4" />
                     Website
                     <ExternalLink className="w-3 h-3" />
@@ -154,10 +154,10 @@ export default function HospitalPage({ params }: HospitalPageProps) {
       <section className="py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-900">
+            <h2 className="text-xl font-bold">
               Housing near {hospital.name}
             </h2>
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-brand-slate">
               {scoredListings.length} {scoredListings.length === 1 ? "listing" : "listings"}
             </span>
           </div>
@@ -169,9 +169,9 @@ export default function HospitalPage({ params }: HospitalPageProps) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-slate-50 rounded-xl">
+            <div className="text-center py-16 bg-brand-light rounded-brand">
               <Building2 className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-              <p className="text-slate-500">No listings found near this hospital yet.</p>
+              <p className="text-brand-slate">No listings found near this hospital yet.</p>
               <p className="text-sm text-slate-400 mt-1">New listings are added weekly.</p>
             </div>
           )}

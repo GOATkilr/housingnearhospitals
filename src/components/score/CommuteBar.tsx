@@ -67,7 +67,7 @@ export function CommuteBar({
       </div>
 
       {/* Visual bar */}
-      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-300"
           style={{

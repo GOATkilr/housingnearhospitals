@@ -13,13 +13,13 @@ export default function MapPage() {
   const hospitals = SAMPLE_HOSPITALS.filter((h) => h.metroId === metro?.metroId);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-brand-light">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 py-4">
+      <div className="bg-white border-b border-gray-200 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-brand-600" />
+              <MapPin className="w-5 h-5 text-brand-blue" />
               Map Explorer
             </h1>
 
@@ -31,7 +31,7 @@ export default function MapPage() {
                   onClick={() => setSelectedMetro(m.slug)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     selectedMetro === m.slug
-                      ? "bg-brand-100 text-brand-800"
+                      ? "bg-blue-50 text-brand-navy"
                       : "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
                   }`}
                 >
@@ -46,7 +46,7 @@ export default function MapPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid lg:grid-cols-[1fr_350px] gap-6">
           {/* Map placeholder */}
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden min-h-[600px] flex flex-col items-center justify-center text-slate-400">
+          <div className="bg-white rounded-brand border border-gray-200 overflow-hidden min-h-[600px] flex flex-col items-center justify-center text-slate-400">
             <div className="text-center p-8">
               <MapPin className="w-16 h-16 mx-auto mb-4 text-slate-200" />
               <h3 className="text-lg font-semibold text-slate-600 mb-2">Interactive Map</h3>
@@ -65,7 +65,7 @@ export default function MapPage() {
                 <div className="space-y-1">
                   {hospitals.slice(0, 5).map((h) => (
                     <div key={h.id} className="flex items-center gap-2 text-xs text-slate-500">
-                      <div className="w-2 h-2 bg-brand-600 rounded-full" />
+                      <div className="w-2 h-2 bg-brand-blue rounded-full" />
                       <span className="truncate">{h.name}</span>
                       <span className="text-slate-300 ml-auto">
                         {h.location.lat.toFixed(4)}, {h.location.lng.toFixed(4)}

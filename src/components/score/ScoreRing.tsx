@@ -33,7 +33,7 @@ export function ScoreRing({ score, size = "md", showLabel = false, className }: 
             cy={config.outer / 2}
             r={radius}
             fill="none"
-            stroke="#E2E8F0"
+            stroke="#E5E7EB"
             strokeWidth={config.stroke}
           />
           {/* Progress circle */}

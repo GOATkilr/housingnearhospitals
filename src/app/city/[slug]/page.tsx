@@ -35,16 +35,16 @@ export default function CityPage({ params }: CityPageProps) {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-b from-brand-900 to-brand-800 text-white py-16">
+      <section className="bg-brand-navy text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-blue-300 text-sm mb-4">
+          <div className="flex items-center gap-2 text-gray-300 text-sm mb-4">
             <MapPin className="w-4 h-4" />
             <span>{metro.name}</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white">
             Housing Near {metro.name} Hospitals
           </h1>
-          <p className="mt-3 text-blue-200 text-lg max-w-2xl">
+          <p className="mt-3 text-gray-300 text-lg max-w-2xl">
             {metro.tagline}
           </p>
 
@@ -60,7 +60,7 @@ export default function CityPage({ params }: CityPageProps) {
       {/* Hospital List */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">
+          <h2 className="text-2xl font-bold mb-6">
             Hospitals in {metro.name}
           </h2>
 
@@ -75,7 +75,7 @@ export default function CityPage({ params }: CityPageProps) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 text-slate-500">
+            <div className="text-center py-16 text-brand-slate">
               <Building2 className="w-12 h-12 mx-auto mb-3 text-slate-300" />
               <p>Hospital data is being imported. Check back soon.</p>
             </div>
@@ -96,11 +96,11 @@ function Stat({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-3 bg-white/10 rounded-lg px-4 py-3">
-      <Icon className="w-5 h-5 text-emerald-400" />
+    <div className="flex items-center gap-3 bg-white/10 rounded-brand px-4 py-3">
+      <Icon className="w-5 h-5 text-brand-blue" />
       <div>
         <p className="text-white font-semibold">{value}</p>
-        <p className="text-blue-300 text-xs">{label}</p>
+        <p className="text-gray-300 text-xs">{label}</p>
       </div>
     </div>
   );
