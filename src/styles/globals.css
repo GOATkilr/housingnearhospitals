@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-primary: 30 64 175;     /* #1E40AF */
+    --brand-secondary: 5 150 105;   /* #059669 */
+    --brand-accent: 245 158 11;     /* #F59E0B */
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  .score-ring {
+    @apply relative inline-flex items-center justify-center;
+  }
+
+  .score-ring svg {
+    @apply -rotate-90 transform;
+  }
+
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
+  }
+
+  .btn-primary {
+    @apply bg-brand-800 text-white px-6 py-2.5 rounded-lg font-medium
+           hover:bg-brand-700 transition-colors focus:outline-none
+           focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-brand-800 px-6 py-2.5 rounded-lg font-medium
+           border border-brand-200 hover:bg-brand-50 transition-colors
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2.5 rounded-lg border border-slate-300
+           focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20
+           focus:outline-none transition-colors placeholder:text-slate-400;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-blue {
+    @apply badge bg-blue-100 text-blue-800;
+  }
+
+  .badge-green {
+    @apply badge bg-emerald-100 text-emerald-800;
+  }
+
+  .badge-amber {
+    @apply badge bg-amber-100 text-amber-800;
+  }
+
+  .badge-red {
+    @apply badge bg-red-100 text-red-800;
+  }
+}
+
+/* Map container */
+.mapboxgl-map {
+  @apply rounded-xl;
+}
+
+/* Score gradient backgrounds */
+.score-bg-excellent { background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); }
+.score-bg-good { background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); }
+.score-bg-fair { background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); }
+.score-bg-moderate { background: linear-gradient(135deg, #FFF7ED 0%, #FED7AA 100%); }
+.score-bg-poor { background: linear-gradient(135deg, #FEF2F2 0%, #FECACA 100%); }
+.score-bg-bad { background: linear-gradient(135deg, #FEE2E2 0%, #FCA5A5 100%); }
