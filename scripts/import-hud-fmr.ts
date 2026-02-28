@@ -89,6 +89,132 @@ const SAFMR_DATA = [
     efficiency: 920, oneBedroom: 1050, twoBedroom: 1260, threeBedroom: 1600, fourBedroom: 1840 },
   { zipCode: "85014", city: "Phoenix", state: "AZ", metroId: "metro-phoenix",
     efficiency: 1020, oneBedroom: 1160, twoBedroom: 1390, threeBedroom: 1780, fourBedroom: 2050 },
+
+  // =====================================
+  // Atlanta, GA — Fulton/DeKalb County MSA
+  // =====================================
+  { zipCode: "30322", city: "Atlanta", state: "GA", metroId: "metro-atlanta",
+    efficiency: 1180, oneBedroom: 1350, twoBedroom: 1580, threeBedroom: 2050, fourBedroom: 2350 },
+  { zipCode: "30303", city: "Atlanta", state: "GA", metroId: "metro-atlanta",
+    efficiency: 1100, oneBedroom: 1260, twoBedroom: 1480, threeBedroom: 1900, fourBedroom: 2180 },
+  { zipCode: "30309", city: "Atlanta", state: "GA", metroId: "metro-atlanta",
+    efficiency: 1220, oneBedroom: 1400, twoBedroom: 1640, threeBedroom: 2120, fourBedroom: 2430 },
+  { zipCode: "30342", city: "Atlanta", state: "GA", metroId: "metro-atlanta",
+    efficiency: 1150, oneBedroom: 1320, twoBedroom: 1550, threeBedroom: 2010, fourBedroom: 2310 },
+  { zipCode: "30308", city: "Atlanta", state: "GA", metroId: "metro-atlanta",
+    efficiency: 1140, oneBedroom: 1300, twoBedroom: 1520, threeBedroom: 1970, fourBedroom: 2260 },
+  { zipCode: "30305", city: "Atlanta", state: "GA", metroId: "metro-atlanta",
+    efficiency: 1300, oneBedroom: 1490, twoBedroom: 1750, threeBedroom: 2280, fourBedroom: 2620 },
+  { zipCode: "30312", city: "Atlanta", state: "GA", metroId: "metro-atlanta",
+    efficiency: 1020, oneBedroom: 1170, twoBedroom: 1370, threeBedroom: 1780, fourBedroom: 2040 },
+
+  // =====================================
+  // Tampa-St. Petersburg, FL — Hillsborough County MSA
+  // =====================================
+  { zipCode: "33606", city: "Tampa", state: "FL", metroId: "metro-tampa",
+    efficiency: 1180, oneBedroom: 1350, twoBedroom: 1590, threeBedroom: 2060, fourBedroom: 2370 },
+  { zipCode: "33613", city: "Tampa", state: "FL", metroId: "metro-tampa",
+    efficiency: 980, oneBedroom: 1120, twoBedroom: 1320, threeBedroom: 1710, fourBedroom: 1960 },
+  { zipCode: "33607", city: "Tampa", state: "FL", metroId: "metro-tampa",
+    efficiency: 1050, oneBedroom: 1200, twoBedroom: 1410, threeBedroom: 1830, fourBedroom: 2100 },
+  { zipCode: "33612", city: "Tampa", state: "FL", metroId: "metro-tampa",
+    efficiency: 950, oneBedroom: 1080, twoBedroom: 1270, threeBedroom: 1650, fourBedroom: 1890 },
+  { zipCode: "33701", city: "St. Petersburg", state: "FL", metroId: "metro-tampa",
+    efficiency: 1100, oneBedroom: 1260, twoBedroom: 1480, threeBedroom: 1920, fourBedroom: 2200 },
+  { zipCode: "33511", city: "Brandon", state: "FL", metroId: "metro-tampa",
+    efficiency: 920, oneBedroom: 1050, twoBedroom: 1240, threeBedroom: 1600, fourBedroom: 1840 },
+  { zipCode: "33756", city: "Clearwater", state: "FL", metroId: "metro-tampa",
+    efficiency: 980, oneBedroom: 1120, twoBedroom: 1310, threeBedroom: 1700, fourBedroom: 1950 },
+
+  // =====================================
+  // Charlotte, NC — Mecklenburg County MSA
+  // =====================================
+  { zipCode: "28203", city: "Charlotte", state: "NC", metroId: "metro-charlotte",
+    efficiency: 1050, oneBedroom: 1200, twoBedroom: 1410, threeBedroom: 1830, fourBedroom: 2100 },
+  { zipCode: "28204", city: "Charlotte", state: "NC", metroId: "metro-charlotte",
+    efficiency: 1080, oneBedroom: 1240, twoBedroom: 1450, threeBedroom: 1880, fourBedroom: 2160 },
+  { zipCode: "28202", city: "Charlotte", state: "NC", metroId: "metro-charlotte",
+    efficiency: 1120, oneBedroom: 1280, twoBedroom: 1500, threeBedroom: 1950, fourBedroom: 2240 },
+  { zipCode: "28134", city: "Pineville", state: "NC", metroId: "metro-charlotte",
+    efficiency: 920, oneBedroom: 1050, twoBedroom: 1240, threeBedroom: 1600, fourBedroom: 1840 },
+  { zipCode: "28105", city: "Matthews", state: "NC", metroId: "metro-charlotte",
+    efficiency: 950, oneBedroom: 1080, twoBedroom: 1270, threeBedroom: 1650, fourBedroom: 1890 },
+  { zipCode: "28206", city: "Charlotte", state: "NC", metroId: "metro-charlotte",
+    efficiency: 980, oneBedroom: 1120, twoBedroom: 1310, threeBedroom: 1700, fourBedroom: 1950 },
+  { zipCode: "28217", city: "Charlotte", state: "NC", metroId: "metro-charlotte",
+    efficiency: 960, oneBedroom: 1100, twoBedroom: 1290, threeBedroom: 1670, fourBedroom: 1920 },
+
+  // =====================================
+  // Dallas-Fort Worth, TX — Dallas County MSA
+  // =====================================
+  { zipCode: "75235", city: "Dallas", state: "TX", metroId: "metro-dallas",
+    efficiency: 980, oneBedroom: 1120, twoBedroom: 1320, threeBedroom: 1710, fourBedroom: 1970 },
+  { zipCode: "75246", city: "Dallas", state: "TX", metroId: "metro-dallas",
+    efficiency: 1050, oneBedroom: 1200, twoBedroom: 1420, threeBedroom: 1840, fourBedroom: 2110 },
+  { zipCode: "75230", city: "Dallas", state: "TX", metroId: "metro-dallas",
+    efficiency: 1200, oneBedroom: 1370, twoBedroom: 1610, threeBedroom: 2090, fourBedroom: 2400 },
+  { zipCode: "75231", city: "Dallas", state: "TX", metroId: "metro-dallas",
+    efficiency: 1080, oneBedroom: 1240, twoBedroom: 1460, threeBedroom: 1890, fourBedroom: 2170 },
+  { zipCode: "76104", city: "Fort Worth", state: "TX", metroId: "metro-dallas",
+    efficiency: 880, oneBedroom: 1010, twoBedroom: 1190, threeBedroom: 1540, fourBedroom: 1770 },
+  { zipCode: "75075", city: "Plano", state: "TX", metroId: "metro-dallas",
+    efficiency: 1100, oneBedroom: 1260, twoBedroom: 1480, threeBedroom: 1920, fourBedroom: 2200 },
+  { zipCode: "76010", city: "Arlington", state: "TX", metroId: "metro-dallas",
+    efficiency: 900, oneBedroom: 1030, twoBedroom: 1210, threeBedroom: 1570, fourBedroom: 1800 },
+
+  // =====================================
+  // Denver, CO — Denver County MSA
+  // =====================================
+  { zipCode: "80045", city: "Aurora", state: "CO", metroId: "metro-denver",
+    efficiency: 1180, oneBedroom: 1350, twoBedroom: 1590, threeBedroom: 2060, fourBedroom: 2370 },
+  { zipCode: "80204", city: "Denver", state: "CO", metroId: "metro-denver",
+    efficiency: 1150, oneBedroom: 1310, twoBedroom: 1540, threeBedroom: 2000, fourBedroom: 2300 },
+  { zipCode: "80206", city: "Denver", state: "CO", metroId: "metro-denver",
+    efficiency: 1280, oneBedroom: 1460, twoBedroom: 1720, threeBedroom: 2230, fourBedroom: 2560 },
+  { zipCode: "80218", city: "Denver", state: "CO", metroId: "metro-denver",
+    efficiency: 1220, oneBedroom: 1400, twoBedroom: 1640, threeBedroom: 2130, fourBedroom: 2440 },
+  { zipCode: "80113", city: "Englewood", state: "CO", metroId: "metro-denver",
+    efficiency: 1100, oneBedroom: 1260, twoBedroom: 1480, threeBedroom: 1920, fourBedroom: 2200 },
+  { zipCode: "80220", city: "Denver", state: "CO", metroId: "metro-denver",
+    efficiency: 1080, oneBedroom: 1230, twoBedroom: 1450, threeBedroom: 1880, fourBedroom: 2160 },
+  { zipCode: "80010", city: "Aurora", state: "CO", metroId: "metro-denver",
+    efficiency: 980, oneBedroom: 1120, twoBedroom: 1320, threeBedroom: 1710, fourBedroom: 1960 },
+
+  // =====================================
+  // Minneapolis-St. Paul, MN — Hennepin County MSA
+  // =====================================
+  { zipCode: "55407", city: "Minneapolis", state: "MN", metroId: "metro-minneapolis",
+    efficiency: 980, oneBedroom: 1120, twoBedroom: 1320, threeBedroom: 1710, fourBedroom: 1960 },
+  { zipCode: "55415", city: "Minneapolis", state: "MN", metroId: "metro-minneapolis",
+    efficiency: 1100, oneBedroom: 1260, twoBedroom: 1480, threeBedroom: 1920, fourBedroom: 2200 },
+  { zipCode: "55455", city: "Minneapolis", state: "MN", metroId: "metro-minneapolis",
+    efficiency: 1050, oneBedroom: 1200, twoBedroom: 1410, threeBedroom: 1830, fourBedroom: 2100 },
+  { zipCode: "55101", city: "St. Paul", state: "MN", metroId: "metro-minneapolis",
+    efficiency: 920, oneBedroom: 1050, twoBedroom: 1240, threeBedroom: 1600, fourBedroom: 1840 },
+  { zipCode: "55404", city: "Minneapolis", state: "MN", metroId: "metro-minneapolis",
+    efficiency: 950, oneBedroom: 1080, twoBedroom: 1270, threeBedroom: 1650, fourBedroom: 1890 },
+  { zipCode: "55102", city: "St. Paul", state: "MN", metroId: "metro-minneapolis",
+    efficiency: 940, oneBedroom: 1070, twoBedroom: 1260, threeBedroom: 1630, fourBedroom: 1870 },
+  { zipCode: "55422", city: "Robbinsdale", state: "MN", metroId: "metro-minneapolis",
+    efficiency: 900, oneBedroom: 1030, twoBedroom: 1210, threeBedroom: 1570, fourBedroom: 1800 },
+
+  // =====================================
+  // San Antonio, TX — Bexar County MSA
+  // =====================================
+  { zipCode: "78234", city: "San Antonio", state: "TX", metroId: "metro-san-antonio",
+    efficiency: 820, oneBedroom: 940, twoBedroom: 1100, threeBedroom: 1430, fourBedroom: 1640 },
+  { zipCode: "78229", city: "San Antonio", state: "TX", metroId: "metro-san-antonio",
+    efficiency: 880, oneBedroom: 1010, twoBedroom: 1190, threeBedroom: 1540, fourBedroom: 1770 },
+  { zipCode: "78205", city: "San Antonio", state: "TX", metroId: "metro-san-antonio",
+    efficiency: 920, oneBedroom: 1050, twoBedroom: 1240, threeBedroom: 1600, fourBedroom: 1840 },
+  { zipCode: "78207", city: "San Antonio", state: "TX", metroId: "metro-san-antonio",
+    efficiency: 750, oneBedroom: 860, twoBedroom: 1010, threeBedroom: 1310, fourBedroom: 1500 },
+  { zipCode: "78233", city: "San Antonio", state: "TX", metroId: "metro-san-antonio",
+    efficiency: 850, oneBedroom: 970, twoBedroom: 1140, threeBedroom: 1480, fourBedroom: 1700 },
+  { zipCode: "78223", city: "San Antonio", state: "TX", metroId: "metro-san-antonio",
+    efficiency: 780, oneBedroom: 890, twoBedroom: 1050, threeBedroom: 1360, fourBedroom: 1560 },
+  { zipCode: "78240", city: "San Antonio", state: "TX", metroId: "metro-san-antonio",
+    efficiency: 900, oneBedroom: 1030, twoBedroom: 1210, threeBedroom: 1570, fourBedroom: 1800 },
 ];
 
 async function main() {
