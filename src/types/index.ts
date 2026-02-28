@@ -42,6 +42,23 @@ export interface Hospital {
   cmsPatientExp?: number;
   cmsSafetyRating?: number;
   isActive: boolean;
+  // CMS enrichment fields
+  cmsHcahps?: CmsHcahpsData;
+  cmsMortality?: string;
+  cmsReadmission?: string;
+  edWaitMinutes?: number;
+}
+
+export interface CmsHcahpsData {
+  overallRating?: number;
+  nurseComm?: string;
+  doctorComm?: string;
+  staffResponsiveness?: string;
+  commAboutMeds?: string;
+  cleanliness?: string;
+  quietness?: string;
+  dischargeInfo?: string;
+  recommendHospital?: string;
 }
 
 export type HospitalType =
@@ -116,6 +133,9 @@ export interface HospitalListingScore {
   proximityScore: number;
   combinedScore?: number;
   calculationMethod: "haversine" | "osrm" | "google";
+  // Novel scoring fields
+  stipendFit?: StipendFitResult;
+  hwciScore?: number;
 }
 
 export interface SearchResult {
@@ -178,4 +198,92 @@ export interface ScoreBandInfo {
   color: string;
   bgColor: string;
   minScore: number;
+}
+
+// ============================================================
+// Novel Data Types — Stipend Fit, GSA, HUD, HWCI
+// ============================================================
+
+/** GSA per-diem lodging rate for a specific location */
+export interface GsaPerDiemRate {
+  fiscalYear: number;
+  state: string;
+  city: string;
+  county: string;
+  lodgingRate: number;
+  mieRate: number;
+  isNonStandard: boolean;
+}
+
+/** HUD Small Area Fair Market Rent for a ZIP code */
+export interface HudSafmrRate {
+  zipCode: string;
+  year: number;
+  efficiency: number;
+  oneBedroom: number;
+  twoBedroom: number;
+  threeBedroom: number;
+  fourBedroom: number;
+  metroAreaName?: string;
+}
+
+/** Stipend Fit calculation result */
+export interface StipendFitResult {
+  gsaLodgingNightly: number;
+  gsaLodgingMonthly: number;
+  gsaMieDaily: number;
+  gsaMieMonthly: number;
+  listingRent: number;
+  monthlySavings: number;
+  stipendFitScore: number;
+  band: StipendFitBand;
+}
+
+export type StipendFitBand =
+  | "great_value"
+  | "good_fit"
+  | "moderate"
+  | "tight"
+  | "over_budget";
+
+export interface StipendFitBandInfo {
+  band: StipendFitBand;
+  label: string;
+  description: string;
+  color: string;
+  bgColor: string;
+  minScore: number;
+}
+
+/** Healthcare Worker Commute Index — composite score */
+export interface HwciResult {
+  score: number;
+  band: ScoreBand;
+  components: {
+    dayShiftCommute: number;
+    nightShiftCommute: number;
+    stipendFit: number;
+    neighborhoodSafety: number;
+    walkTransit: number;
+    listingQuality: number;
+  };
+}
+
+export const HWCI_WEIGHTS = {
+  dayShiftCommute: 0.35,
+  nightShiftCommute: 0.25,
+  stipendFit: 0.15,
+  neighborhoodSafety: 0.10,
+  walkTransit: 0.10,
+  listingQuality: 0.05,
+} as const;
+
+/** Affiliate link tracking */
+export interface AffiliateLink {
+  platform: ListingSource;
+  originalUrl: string;
+  affiliateUrl: string;
+  listingId: string;
+  hospitalId?: string;
+  metroSlug: string;
 }

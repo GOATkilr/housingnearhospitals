@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "db:seed": "tsx scripts/seed-hospitals.ts",
-    "db:score": "tsx scripts/calculate-scores.ts"
+    "db:score": "tsx scripts/calculate-scores.ts",
+    "import:hifld": "tsx scripts/import-hifld.ts",
+    "import:cms": "tsx scripts/import-cms.ts",
+    "import:gsa": "tsx scripts/import-gsa-perdiem.ts",
+    "import:hud": "tsx scripts/import-hud-fmr.ts",
+    "import:all": "tsx scripts/import-hifld.ts && tsx scripts/import-cms.ts && tsx scripts/import-gsa-perdiem.ts && tsx scripts/import-hud-fmr.ts"
   },
   "dependencies": {
     "next": "^14.2.0",
