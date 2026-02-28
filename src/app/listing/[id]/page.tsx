@@ -10,6 +10,8 @@ import { calculateFullProximityScore } from "@/lib/scoring";
 import { ScoreRing } from "@/components/score/ScoreRing";
 import { CommuteBar } from "@/components/score/CommuteBar";
 import { formatPrice } from "@/lib/utils";
+import { SITE_URL, generateListingJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
 
 interface ListingPageProps {
@@ -23,9 +25,14 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: ListingPageProps): Promise<Metadata> {
   const listing = SAMPLE_LISTINGS.find((l) => l.id === params.id);
   if (!listing) return {};
+  const title = listing.title;
+  const description = listing.description ?? `${listing.title} - ${formatPrice(listing.priceMonthly)}/mo in ${listing.city}, ${listing.stateCode}`;
   return {
-    title: `${listing.title} | Housing Near Hospitals`,
-    description: listing.description ?? `${listing.title} - ${formatPrice(listing.priceMonthly)}/mo in ${listing.city}, ${listing.stateCode}`,
+    title,
+    description,
+    alternates: { canonical: `${SITE_URL}/listing/${listing.id}` },
+    openGraph: { title, description, url: `${SITE_URL}/listing/${listing.id}`, type: "website" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
@@ -52,6 +59,15 @@ export default function ListingPage({ params }: ListingPageProps) {
 
   return (
     <div>
+      <JsonLd data={generateListingJsonLd(listing)} />
+      <JsonLd
+        data={generateBreadcrumbJsonLd([
+          { name: "Home", url: SITE_URL },
+          { name: "Search", url: `${SITE_URL}/search` },
+          { name: listing.title, url: `${SITE_URL}/listing/${listing.id}` },
+        ])}
+      />
+
       {/* Header */}
       <section className="bg-brand-navy text-white py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

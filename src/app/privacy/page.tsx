@@ -1,9 +1,16 @@
 import { SITE_NAME } from "@/lib/constants";
+import { SITE_URL } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: `Privacy Policy | ${SITE_NAME}`,
   description: "Privacy policy for Housing Near Hospitals.",
+  alternates: { canonical: `${SITE_URL}/privacy` },
+  openGraph: {
+    title: `Privacy Policy | ${SITE_NAME}`,
+    description: "Privacy policy for Housing Near Hospitals.",
+    url: `${SITE_URL}/privacy`,
+  },
 };
 
 export default function PrivacyPage() {

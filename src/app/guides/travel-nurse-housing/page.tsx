@@ -1,16 +1,31 @@
 import Link from "next/link";
 import { Building2, Clock, Armchair, Shield, Star, ArrowRight } from "lucide-react";
 import { SITE_NAME, LAUNCH_METROS } from "@/lib/constants";
+import { SITE_URL, generateArticleJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
 import type { Metadata } from "next";
 
+const title = `Travel Nurse Housing Guide | ${SITE_NAME}`;
+const description = "Complete guide to finding housing as a travel nurse. Tips on furnished rentals, short-term leases, and proximity to your hospital assignment.";
+
 export const metadata: Metadata = {
-  title: `Travel Nurse Housing Guide | ${SITE_NAME}`,
-  description: "Complete guide to finding housing as a travel nurse. Tips on furnished rentals, short-term leases, and proximity to your hospital assignment.",
+  title,
+  description,
+  alternates: { canonical: `${SITE_URL}/guides/travel-nurse-housing` },
+  openGraph: { title, description, url: `${SITE_URL}/guides/travel-nurse-housing`, type: "article" },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 export default function TravelNurseGuidePage() {
   return (
     <div>
+      <JsonLd data={generateArticleJsonLd({ title: "Travel Nurse Housing Guide", description, path: "/guides/travel-nurse-housing" })} />
+      <JsonLd
+        data={generateBreadcrumbJsonLd([
+          { name: "Home", url: SITE_URL },
+          { name: "Guides", url: `${SITE_URL}/guides/travel-nurse-housing` },
+        ])}
+      />
       <section className="bg-brand-navy text-white py-16">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h1 className="text-3xl sm:text-4xl font-bold">Travel Nurse Housing Guide</h1>

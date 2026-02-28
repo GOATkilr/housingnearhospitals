@@ -1,10 +1,17 @@
 import { Building2, Heart, MapPin, TrendingUp } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
+import { SITE_URL } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: `About | ${SITE_NAME}`,
   description: "Learn about Housing Near Hospitals — a platform built to help healthcare workers find housing scored by commute time to their hospital.",
+  alternates: { canonical: `${SITE_URL}/about` },
+  openGraph: {
+    title: `About | ${SITE_NAME}`,
+    description: "Learn about Housing Near Hospitals — a platform built to help healthcare workers find housing scored by commute time to their hospital.",
+    url: `${SITE_URL}/about`,
+  },
 };
 
 export default function AboutPage() {

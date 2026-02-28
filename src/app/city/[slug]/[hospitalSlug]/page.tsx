@@ -9,6 +9,8 @@ import { LAUNCH_METROS } from "@/lib/constants";
 import { ListingCard } from "@/components/listing/ListingCard";
 import { calculateFullProximityScore } from "@/lib/scoring";
 import { formatNumber } from "@/lib/utils";
+import { SITE_URL, generateHospitalJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
 import type { HospitalListingScore } from "@/types";
 import type { Metadata } from "next";
 
@@ -30,9 +32,14 @@ export async function generateMetadata({ params }: HospitalPageProps): Promise<M
   const hospital = SAMPLE_HOSPITALS.find((h) => h.slug === params.hospitalSlug);
   const metro = LAUNCH_METROS.find((m) => m.slug === params.slug);
   if (!hospital || !metro) return {};
+  const title = `Housing Near ${hospital.name} | ${metro.name}`;
+  const description = `Find apartments and housing near ${hospital.name} in ${metro.name}. Proximity-scored listings for healthcare workers, travel nurses, and residents.`;
   return {
-    title: `Housing Near ${hospital.name} | ${metro.name}`,
-    description: `Find apartments and housing near ${hospital.name} in ${metro.name}. Proximity-scored listings for healthcare workers, travel nurses, and residents.`,
+    title,
+    description,
+    alternates: { canonical: `${SITE_URL}/city/${metro.slug}/${hospital.slug}` },
+    openGraph: { title, description, url: `${SITE_URL}/city/${metro.slug}/${hospital.slug}`, type: "website" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
@@ -75,6 +82,15 @@ export default function HospitalPage({ params }: HospitalPageProps) {
 
   return (
     <div>
+      <JsonLd data={generateHospitalJsonLd(hospital, slug)} />
+      <JsonLd
+        data={generateBreadcrumbJsonLd([
+          { name: "Home", url: SITE_URL },
+          { name: metro.name, url: `${SITE_URL}/city/${slug}` },
+          { name: hospital.name, url: `${SITE_URL}/city/${slug}/${hospital.slug}` },
+        ])}
+      />
+
       {/* Breadcrumb + Hospital Header */}
       <section className="bg-brand-navy text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

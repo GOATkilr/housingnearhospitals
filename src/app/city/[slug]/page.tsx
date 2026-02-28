@@ -4,6 +4,9 @@ import { LAUNCH_METROS } from "@/lib/constants";
 import { SAMPLE_HOSPITALS, SAMPLE_METROS } from "@/lib/sample-data";
 import { HospitalCard } from "@/components/hospital/HospitalCard";
 import { formatNumber, formatPrice } from "@/lib/utils";
+import { SITE_URL, generateCityJsonLd, generateBreadcrumbJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { ACTIVE_METROS } from "@/lib/metro-config";
 import type { Metadata } from "next";
 
 interface CityPageProps {
@@ -17,9 +20,14 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
   const metro = LAUNCH_METROS.find((m) => m.slug === params.slug);
   if (!metro) return {};
+  const title = `Housing Near ${metro.name} Hospitals`;
+  const description = `Find apartments and housing near hospitals in ${metro.name}. Browse ${metro.hospitalCount}+ hospitals with proximity-scored listings for healthcare workers.`;
   return {
-    title: `Housing Near ${metro.name} Hospitals`,
-    description: `Find apartments and housing near hospitals in ${metro.name}. Browse ${metro.hospitalCount}+ hospitals with proximity-scored listings for healthcare workers.`,
+    title,
+    description,
+    alternates: { canonical: `${SITE_URL}/city/${metro.slug}` },
+    openGraph: { title, description, url: `${SITE_URL}/city/${metro.slug}`, type: "website" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
@@ -31,9 +39,17 @@ export default function CityPage({ params }: CityPageProps) {
 
   const hospitals = SAMPLE_HOSPITALS.filter((h) => h.metroId === metro.metroId);
   const metroData = SAMPLE_METROS.find((m) => m.id === metro.metroId);
+  const metroConfig = ACTIVE_METROS.find((m) => m.slug === params.slug);
 
   return (
     <div>
+      {metroConfig && <JsonLd data={generateCityJsonLd(metroConfig)} />}
+      <JsonLd
+        data={generateBreadcrumbJsonLd([
+          { name: "Home", url: SITE_URL },
+          { name: metro.name, url: `${SITE_URL}/city/${metro.slug}` },
+        ])}
+      />
       {/* Hero */}
       <section className="bg-brand-navy text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

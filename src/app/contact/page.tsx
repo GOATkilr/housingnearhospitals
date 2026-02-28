@@ -1,10 +1,17 @@
 import { Mail, MessageSquare } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
+import { SITE_URL } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: `Contact | ${SITE_NAME}`,
   description: "Get in touch with the Housing Near Hospitals team. We'd love to hear from you.",
+  alternates: { canonical: `${SITE_URL}/contact` },
+  openGraph: {
+    title: `Contact | ${SITE_NAME}`,
+    description: "Get in touch with the Housing Near Hospitals team. We'd love to hear from you.",
+    url: `${SITE_URL}/contact`,
+  },
 };
 
 export default function ContactPage() {
