@@ -25,85 +25,54 @@ import * as path from "path";
 const DATA_DIR = path.join(process.cwd(), "data");
 
 /**
- * FY2025/FY2026 GSA Per Diem Rates for our launch metros.
+ * FY2025/FY2026 GSA Per Diem Rates for all configured metros.
+ * Reads from config/metros.json — each metro has a gsa section.
  *
  * Source: https://www.gsa.gov/travel/plan-book/per-diem-rates
- * Looked up 2024-10 through 2025-09 (FY2025) for each metro.
- * FY2026 rates are identical per GSA announcement.
- *
- * CONUS standard rate: $110/night lodging, $68/day M&IE
- * Non-standard areas have higher rates.
+ * FY2026 rates = FY2025 (GSA froze rates for cost efficiency).
+ * CONUS standard rate: $110/night lodging, $68/day M&IE.
  */
-const GSA_RATES = [
-  // Nashville, TN — Davidson County
-  {
-    fiscalYear: 2026,
-    state: "TN",
-    city: "Nashville",
-    county: "Davidson",
-    lodgingRate: 164, // Non-standard area — higher than $110
-    mieRate: 74,
-    isNonStandard: true,
-    notes: "Nashville is a designated non-standard area (NSA)",
-  },
-  // Also include Williamson County (Franklin, south of Nashville)
-  {
-    fiscalYear: 2026,
-    state: "TN",
-    city: "Franklin",
-    county: "Williamson",
-    lodgingRate: 164,
-    mieRate: 74,
-    isNonStandard: true,
-    notes: "Part of Nashville NSA",
-  },
+function loadGsaRatesFromConfig(): Array<{
+  fiscalYear: number;
+  state: string;
+  city: string;
+  county: string;
+  lodgingRate: number;
+  mieRate: number;
+  isNonStandard: boolean;
+  notes: string;
+}> {
+  const configPath = path.join(process.cwd(), "src", "config", "metros.json");
+  const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+  const rates: Array<{
+    fiscalYear: number;
+    state: string;
+    city: string;
+    county: string;
+    lodgingRate: number;
+    mieRate: number;
+    isNonStandard: boolean;
+    notes: string;
+  }> = [];
 
-  // Houston, TX — Harris County
-  {
-    fiscalYear: 2026,
-    state: "TX",
-    city: "Houston",
-    county: "Harris",
-    lodgingRate: 138,
-    mieRate: 74,
-    isNonStandard: true,
-    notes: "Houston is a designated non-standard area (NSA)",
-  },
-  // Fort Bend County (Sugar Land, southwest of Houston)
-  {
-    fiscalYear: 2026,
-    state: "TX",
-    city: "Sugar Land",
-    county: "Fort Bend",
-    lodgingRate: 138,
-    mieRate: 74,
-    isNonStandard: true,
-    notes: "Part of Houston NSA",
-  },
+  for (const metro of config.metros) {
+    if (metro.tier === "disabled" || !metro.gsa) continue;
+    rates.push({
+      fiscalYear: 2026,
+      state: metro.stateCode,
+      city: metro.name.split(",")[0].trim(),
+      county: metro.gsa.primaryCounty,
+      lodgingRate: metro.gsa.lodgingRate,
+      mieRate: metro.gsa.mieRate,
+      isNonStandard: metro.gsa.isNonStandard,
+      notes: `${metro.name} — ${metro.gsa.isNonStandard ? "Non-standard area" : "CONUS standard"}`,
+    });
+  }
 
-  // Phoenix, AZ — Maricopa County
-  {
-    fiscalYear: 2026,
-    state: "AZ",
-    city: "Phoenix",
-    county: "Maricopa",
-    lodgingRate: 158,
-    mieRate: 74,
-    isNonStandard: true,
-    notes: "Phoenix/Scottsdale is a designated non-standard area",
-  },
-  // Scottsdale is in Maricopa but sometimes listed separately
-  {
-    fiscalYear: 2026,
-    state: "AZ",
-    city: "Scottsdale",
-    county: "Maricopa",
-    lodgingRate: 158,
-    mieRate: 74,
-    isNonStandard: true,
-    notes: "Part of Phoenix NSA",
-  },
-];
+  return rates;
+}
+
+const GSA_RATES = loadGsaRatesFromConfig();
 
 /**
  * Compute derived stipend values used in the Stipend Fit Score.
@@ -175,13 +144,14 @@ async function main() {
   fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
   console.log(`Wrote GSA per diem rates to ${outputPath}`);
 
-  console.log("\n  Stipend context for travel nurses:");
-  console.log("  A nurse in Nashville could receive up to:");
-  const nash = enrichedRates.find((r) => r.city === "Nashville")!;
-  console.log(`    $${nash.derived.monthlyLodging}/mo lodging stipend (tax-free)`);
-  console.log(`    $${nash.derived.monthlyMie}/mo M&IE stipend (tax-free)`);
-  console.log(`    $${nash.derived.monthlyTotal}/mo total (if agency pays max GSA rates)`);
-  console.log(`  A $1,500/mo apartment would save ~$${nash.derived.monthlyLodging - 1500}/mo vs stipend\n`);
+  // Show stipend context for first metro
+  if (enrichedRates.length > 0) {
+    const first = enrichedRates[0];
+    console.log(`\n  Stipend context for travel nurses in ${first.city}:`);
+    console.log(`    $${first.derived.monthlyLodging}/mo lodging stipend (tax-free)`);
+    console.log(`    $${first.derived.monthlyMie}/mo M&IE stipend (tax-free)`);
+    console.log(`    $${first.derived.monthlyTotal}/mo total (if agency pays max GSA rates)`);
+  }
 
   console.log("=== Done ===");
 }

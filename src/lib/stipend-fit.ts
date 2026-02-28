@@ -14,41 +14,25 @@ import type {
   StipendFitBandInfo,
   GsaPerDiemRate,
 } from "@/types";
+import { ALL_METROS } from "@/lib/metro-config";
 
 // ============================================================
-// GSA Per Diem Rates by Metro (FY2025 = FY2026)
+// GSA Per Diem Rates by Metro — loaded from config/metros.json
 // Source: https://www.gsa.gov/travel/plan-book/per-diem-rates
 // ============================================================
 
-const GSA_RATES_BY_METRO: Record<string, GsaPerDiemRate> = {
-  "metro-nashville": {
+const GSA_RATES_BY_METRO: Record<string, GsaPerDiemRate> = {};
+for (const metro of ALL_METROS) {
+  GSA_RATES_BY_METRO[metro.metroId] = {
     fiscalYear: 2026,
-    state: "TN",
-    city: "Nashville",
-    county: "Davidson",
-    lodgingRate: 164,
-    mieRate: 74,
-    isNonStandard: true,
-  },
-  "metro-houston": {
-    fiscalYear: 2026,
-    state: "TX",
-    city: "Houston",
-    county: "Harris",
-    lodgingRate: 138,
-    mieRate: 74,
-    isNonStandard: true,
-  },
-  "metro-phoenix": {
-    fiscalYear: 2026,
-    state: "AZ",
-    city: "Phoenix",
-    county: "Maricopa",
-    lodgingRate: 158,
-    mieRate: 74,
-    isNonStandard: true,
-  },
-};
+    state: metro.stateCode,
+    city: metro.name.split(",")[0].trim(),
+    county: metro.gsa.primaryCounty,
+    lodgingRate: metro.gsa.lodgingRate,
+    mieRate: metro.gsa.mieRate,
+    isNonStandard: metro.gsa.isNonStandard,
+  };
+}
 
 // CONUS standard (fallback for unknown metros)
 const CONUS_STANDARD: GsaPerDiemRate = {

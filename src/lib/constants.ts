@@ -37,51 +37,15 @@ export const SORT_OPTIONS = [
   { value: "distance", label: "Distance: Nearest" },
 ] as const;
 
-export const LAUNCH_METROS = [
-  {
-    metroId: "metro-nashville",
-    slug: "nashville-tn",
-    name: "Nashville, TN",
-    stateCode: "TN",
-    center: { lat: 36.1627, lng: -86.7816 },
-    circuityFactor: 1.3,
-    heroImage: "/images/nashville.jpg",
-    hospitalCount: 25,
-    tagline: "Music City's healthcare hub — HCA headquarters, Vanderbilt, and more",
-  },
-  {
-    metroId: "metro-houston",
-    slug: "houston-tx",
-    name: "Houston, TX",
-    stateCode: "TX",
-    center: { lat: 29.7604, lng: -95.3698 },
-    circuityFactor: 1.4,
-    heroImage: "/images/houston.jpg",
-    hospitalCount: 40,
-    tagline: "Home to Texas Medical Center — the world's largest medical complex",
-  },
-  {
-    metroId: "metro-phoenix",
-    slug: "phoenix-az",
-    name: "Phoenix, AZ",
-    stateCode: "AZ",
-    center: { lat: 33.4484, lng: -112.074 },
-    circuityFactor: 1.25,
-    heroImage: "/images/phoenix.jpg",
-    hospitalCount: 30,
-    tagline: "Rapidly growing with Banner Health, Mayo Clinic, and HonorHealth",
-  },
-] as const;
-
-/** Find a LAUNCH_METRO by its metroId */
-export function getMetroById(metroId: string) {
-  return LAUNCH_METROS.find((m) => m.metroId === metroId);
-}
-
-/** Find a LAUNCH_METRO by its slug */
-export function getMetroBySlug(slug: string) {
-  return LAUNCH_METROS.find((m) => m.slug === slug);
-}
+// Metro configuration — now driven by config/metros.json
+// Re-exported from metro-config.ts for backward compatibility
+export {
+  LAUNCH_METROS,
+  ACTIVE_METROS,
+  NAV_METROS,
+  getMetroConfigById as getMetroById,
+  getMetroConfigBySlug as getMetroBySlug,
+} from "@/lib/metro-config";
 
 // Map styles
 export const MAP_STYLE = "mapbox://styles/mapbox/light-v11";

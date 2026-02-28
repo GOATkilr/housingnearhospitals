@@ -64,7 +64,7 @@ export default function HomePage() {
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-emerald-400" />
-                <span><strong className="text-white">3</strong> launch metros</span>
+                <span><strong className="text-white">{LAUNCH_METROS.length}</strong> metros</span>
               </div>
               <div className="flex items-center gap-2">
                 <Star className="w-5 h-5 text-emerald-400" />
@@ -88,7 +88,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             <StepCard
               title="Pick your hospital"
-              description="Search from our database of hospitals across Nashville, Houston, and Phoenix. We know every facility."
+              description="Search from our database of hospitals across 10 major metros. We know every facility."
               icon={Building2}
             />
             <StepCard
@@ -111,7 +111,7 @@ export default function HomePage() {
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold">Explore cities</h2>
             <p className="mt-3 text-brand-slate">
-              We&apos;re launching in three major healthcare markets.
+              Find housing in {LAUNCH_METROS.length} major healthcare markets.
             </p>
           </div>
 

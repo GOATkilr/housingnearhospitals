@@ -34,8 +34,17 @@ const CMS_HOSPITAL_INFO_URL =
 const CMS_HCAHPS_URL =
   "https://data.cms.gov/provider-data/api/1/datastore/query/dgck-syfz/0";
 
-// State codes for our metros
-const TARGET_STATES = ["TN", "TX", "AZ"];
+// Derive state codes from metro config
+function loadTargetStates(): string[] {
+  const configPath = path.join(process.cwd(), "src", "config", "metros.json");
+  const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+  const states = new Set<string>();
+  for (const metro of config.metros) {
+    if (metro.tier !== "disabled") states.add(metro.stateCode);
+  }
+  return Array.from(states);
+}
+const TARGET_STATES = loadTargetStates();
 
 interface CmsHospitalRecord {
   facility_id: string; // CCN — 6-digit code

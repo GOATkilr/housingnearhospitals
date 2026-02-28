@@ -2,7 +2,7 @@
  * HIFLD Hospital Import Script
  *
  * Downloads the HIFLD hospital dataset from ArcGIS and outputs filtered JSON
- * for our launch metros (Nashville, Houston, Phoenix).
+ * for all configured metros in config/metros.json.
  *
  * Data source: HIFLD Open Data
  * URL: https://hifld-geoplatform.opendata.arcgis.com/datasets/hospitals
@@ -13,7 +13,7 @@
  *   npx tsx scripts/import-hifld.ts --metro nashville-tn
  *
  * Output:
- *   data/hospitals.json — all hospitals for launch metros
+ *   data/hospitals.json — all hospitals for configured metros
  */
 
 import * as fs from "fs";
@@ -25,30 +25,36 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const HIFLD_API_BASE =
   "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/Hospitals_1/FeatureServer/0/query";
 
-// Metro bounding boxes — generous bounds to capture suburban hospitals
-const METRO_BOUNDS: Record<
+// Load metro bounding boxes from config/metros.json
+interface MetroConfigEntry {
+  metroId: string;
+  slug: string;
+  name: string;
+  boundingBox: { latMin: number; latMax: number; lngMin: number; lngMax: number };
+  tier: string;
+}
+
+function loadMetroBounds(): Record<
   string,
   { lat: [number, number]; lng: [number, number]; metroId: string; name: string }
-> = {
-  "nashville-tn": {
-    lat: [35.75, 36.55],
-    lng: [-87.25, -86.35],
-    metroId: "metro-nashville",
-    name: "Nashville, TN",
-  },
-  "houston-tx": {
-    lat: [29.30, 30.25],
-    lng: [-96.00, -94.80],
-    metroId: "metro-houston",
-    name: "Houston, TX",
-  },
-  "phoenix-az": {
-    lat: [33.05, 33.95],
-    lng: [-112.65, -111.45],
-    metroId: "metro-phoenix",
-    name: "Phoenix, AZ",
-  },
-};
+> {
+  const configPath = path.join(process.cwd(), "src", "config", "metros.json");
+  const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+  const bounds: Record<string, { lat: [number, number]; lng: [number, number]; metroId: string; name: string }> = {};
+
+  for (const metro of config.metros as MetroConfigEntry[]) {
+    if (metro.tier === "disabled") continue;
+    bounds[metro.slug] = {
+      lat: [metro.boundingBox.latMin, metro.boundingBox.latMax],
+      lng: [metro.boundingBox.lngMin, metro.boundingBox.lngMax],
+      metroId: metro.metroId,
+      name: metro.name,
+    };
+  }
+  return bounds;
+}
+
+const METRO_BOUNDS = loadMetroBounds();
 
 interface HifldFeature {
   attributes: {

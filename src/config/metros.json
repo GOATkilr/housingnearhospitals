@@ -1,0 +1,326 @@
+{
+  "version": 1,
+  "lastUpdated": "2026-02-28",
+  "metros": [
+    {
+      "metroId": "metro-nashville",
+      "slug": "nashville-tn",
+      "name": "Nashville, TN",
+      "stateCode": "TN",
+      "center": { "lat": 36.1627, "lng": -86.7816 },
+      "boundingBox": { "latMin": 35.75, "latMax": 36.55, "lngMin": -87.25, "lngMax": -86.35 },
+      "radiusMiles": 30,
+      "timezone": "America/Chicago",
+      "circuityFactor": 1.3,
+      "cbsaCode": "34980",
+      "fipsCountyCodes": ["47037", "47187", "47149", "47165", "47189"],
+      "tier": "active",
+      "wave": 0,
+      "heroImage": "/images/nashville.jpg",
+      "tagline": "Music City's healthcare hub — HCA headquarters, Vanderbilt, and more",
+      "hospitalCount": 25,
+      "metroPop": 1989519,
+      "avgRent1br": 1550,
+      "costOfLiving": 97.5,
+      "gsa": {
+        "primaryCounty": "Davidson",
+        "lodgingRate": 164,
+        "mieRate": 74,
+        "isNonStandard": true
+      },
+      "featureFlags": {
+        "stipendFitEnabled": true,
+        "hwciEnabled": true,
+        "affiliateLinksEnabled": true
+      }
+    },
+    {
+      "metroId": "metro-houston",
+      "slug": "houston-tx",
+      "name": "Houston, TX",
+      "stateCode": "TX",
+      "center": { "lat": 29.7604, "lng": -95.3698 },
+      "boundingBox": { "latMin": 29.30, "latMax": 30.25, "lngMin": -96.00, "lngMax": -94.80 },
+      "radiusMiles": 30,
+      "timezone": "America/Chicago",
+      "circuityFactor": 1.4,
+      "cbsaCode": "26420",
+      "fipsCountyCodes": ["48201", "48157", "48339", "48167", "48291"],
+      "tier": "active",
+      "wave": 0,
+      "heroImage": "/images/houston.jpg",
+      "tagline": "Home to Texas Medical Center — the world's largest medical complex",
+      "hospitalCount": 40,
+      "metroPop": 7122240,
+      "avgRent1br": 1200,
+      "costOfLiving": 93.1,
+      "gsa": {
+        "primaryCounty": "Harris",
+        "lodgingRate": 138,
+        "mieRate": 74,
+        "isNonStandard": true
+      },
+      "featureFlags": {
+        "stipendFitEnabled": true,
+        "hwciEnabled": true,
+        "affiliateLinksEnabled": true
+      }
+    },
+    {
+      "metroId": "metro-phoenix",
+      "slug": "phoenix-az",
+      "name": "Phoenix, AZ",
+      "stateCode": "AZ",
+      "center": { "lat": 33.4484, "lng": -112.074 },
+      "boundingBox": { "latMin": 33.05, "latMax": 33.95, "lngMin": -112.65, "lngMax": -111.45 },
+      "radiusMiles": 30,
+      "timezone": "America/Phoenix",
+      "circuityFactor": 1.25,
+      "cbsaCode": "38060",
+      "fipsCountyCodes": ["04013"],
+      "tier": "active",
+      "wave": 0,
+      "heroImage": "/images/phoenix.jpg",
+      "tagline": "Rapidly growing with Banner Health, Mayo Clinic, and HonorHealth",
+      "hospitalCount": 30,
+      "metroPop": 4845832,
+      "avgRent1br": 1350,
+      "costOfLiving": 100.8,
+      "gsa": {
+        "primaryCounty": "Maricopa",
+        "lodgingRate": 158,
+        "mieRate": 74,
+        "isNonStandard": true
+      },
+      "featureFlags": {
+        "stipendFitEnabled": true,
+        "hwciEnabled": true,
+        "affiliateLinksEnabled": true
+      }
+    },
+    {
+      "metroId": "metro-atlanta",
+      "slug": "atlanta-ga",
+      "name": "Atlanta, GA",
+      "stateCode": "GA",
+      "center": { "lat": 33.749, "lng": -84.388 },
+      "boundingBox": { "latMin": 33.45, "latMax": 34.15, "lngMin": -84.85, "lngMax": -83.90 },
+      "radiusMiles": 30,
+      "timezone": "America/New_York",
+      "circuityFactor": 1.35,
+      "cbsaCode": "12060",
+      "fipsCountyCodes": ["13121", "13089", "13063", "13067", "13135"],
+      "tier": "active",
+      "wave": 1,
+      "heroImage": "/images/atlanta.jpg",
+      "tagline": "Southeast healthcare powerhouse — Emory, Grady, Piedmont, WellStar",
+      "hospitalCount": 35,
+      "metroPop": 6144050,
+      "avgRent1br": 1600,
+      "costOfLiving": 102.3,
+      "gsa": {
+        "primaryCounty": "Fulton",
+        "lodgingRate": 161,
+        "mieRate": 74,
+        "isNonStandard": true
+      },
+      "featureFlags": {
+        "stipendFitEnabled": true,
+        "hwciEnabled": true,
+        "affiliateLinksEnabled": true
+      }
+    },
+    {
+      "metroId": "metro-tampa",
+      "slug": "tampa-fl",
+      "name": "Tampa, FL",
+      "stateCode": "FL",
+      "center": { "lat": 27.9506, "lng": -82.4572 },
+      "boundingBox": { "latMin": 27.55, "latMax": 28.35, "lngMin": -82.90, "lngMax": -82.00 },
+      "radiusMiles": 30,
+      "timezone": "America/New_York",
+      "circuityFactor": 1.3,
+      "cbsaCode": "45300",
+      "fipsCountyCodes": ["12057", "12101", "12103"],
+      "tier": "active",
+      "wave": 1,
+      "heroImage": "/images/tampa.jpg",
+      "tagline": "Florida's healthcare corridor — BayCare, AdventHealth, Moffitt Cancer Center",
+      "hospitalCount": 28,
+      "metroPop": 3175275,
+      "avgRent1br": 1500,
+      "costOfLiving": 99.1,
+      "gsa": {
+        "primaryCounty": "Hillsborough",
+        "lodgingRate": 137,
+        "mieRate": 74,
+        "isNonStandard": true
+      },
+      "featureFlags": {
+        "stipendFitEnabled": true,
+        "hwciEnabled": true,
+        "affiliateLinksEnabled": true
+      }
+    },
+    {
+      "metroId": "metro-charlotte",
+      "slug": "charlotte-nc",
+      "name": "Charlotte, NC",
+      "stateCode": "NC",
+      "center": { "lat": 35.2271, "lng": -80.8431 },
+      "boundingBox": { "latMin": 34.90, "latMax": 35.55, "lngMin": -81.25, "lngMax": -80.45 },
+      "radiusMiles": 30,
+      "timezone": "America/New_York",
+      "circuityFactor": 1.3,
+      "cbsaCode": "16740",
+      "fipsCountyCodes": ["37119", "37071", "37025", "37179", "45091"],
+      "tier": "active",
+      "wave": 1,
+      "heroImage": "/images/charlotte.jpg",
+      "tagline": "Fast-growing Sun Belt hub — Atrium Health, Novant Health, CaroMont",
+      "hospitalCount": 20,
+      "metroPop": 2660329,
+      "avgRent1br": 1400,
+      "costOfLiving": 96.8,
+      "gsa": {
+        "primaryCounty": "Mecklenburg",
+        "lodgingRate": 132,
+        "mieRate": 74,
+        "isNonStandard": true
+      },
+      "featureFlags": {
+        "stipendFitEnabled": true,
+        "hwciEnabled": true,
+        "affiliateLinksEnabled": true
+      }
+    },
+    {
+      "metroId": "metro-dallas",
+      "slug": "dallas-tx",
+      "name": "Dallas-Fort Worth, TX",
+      "stateCode": "TX",
+      "center": { "lat": 32.7767, "lng": -96.797 },
+      "boundingBox": { "latMin": 32.35, "latMax": 33.25, "lngMin": -97.55, "lngMax": -96.25 },
+      "radiusMiles": 35,
+      "timezone": "America/Chicago",
+      "circuityFactor": 1.35,
+      "cbsaCode": "19100",
+      "fipsCountyCodes": ["48113", "48439", "48085", "48121", "48251"],
+      "tier": "active",
+      "wave": 1,
+      "heroImage": "/images/dallas.jpg",
+      "tagline": "Sprawling medical market — Baylor Scott & White, UT Southwestern, Parkland",
+      "hospitalCount": 50,
+      "metroPop": 7637387,
+      "avgRent1br": 1350,
+      "costOfLiving": 95.4,
+      "gsa": {
+        "primaryCounty": "Dallas",
+        "lodgingRate": 152,
+        "mieRate": 74,
+        "isNonStandard": true
+      },
+      "featureFlags": {
+        "stipendFitEnabled": true,
+        "hwciEnabled": true,
+        "affiliateLinksEnabled": true
+      }
+    },
+    {
+      "metroId": "metro-denver",
+      "slug": "denver-co",
+      "name": "Denver, CO",
+      "stateCode": "CO",
+      "center": { "lat": 39.7392, "lng": -104.9903 },
+      "boundingBox": { "latMin": 39.40, "latMax": 40.10, "lngMin": -105.40, "lngMax": -104.55 },
+      "radiusMiles": 30,
+      "timezone": "America/Denver",
+      "circuityFactor": 1.3,
+      "cbsaCode": "19740",
+      "fipsCountyCodes": ["08031", "08001", "08005", "08035", "08059"],
+      "tier": "active",
+      "wave": 1,
+      "heroImage": "/images/denver.jpg",
+      "tagline": "Mountain West medical hub — UCHealth, SCL Health, Denver Health",
+      "hospitalCount": 22,
+      "metroPop": 2963821,
+      "avgRent1br": 1650,
+      "costOfLiving": 107.2,
+      "gsa": {
+        "primaryCounty": "Denver",
+        "lodgingRate": 199,
+        "mieRate": 79,
+        "isNonStandard": true
+      },
+      "featureFlags": {
+        "stipendFitEnabled": true,
+        "hwciEnabled": true,
+        "affiliateLinksEnabled": true
+      }
+    },
+    {
+      "metroId": "metro-minneapolis",
+      "slug": "minneapolis-mn",
+      "name": "Minneapolis-St. Paul, MN",
+      "stateCode": "MN",
+      "center": { "lat": 44.9778, "lng": -93.265 },
+      "boundingBox": { "latMin": 44.65, "latMax": 45.35, "lngMin": -93.70, "lngMax": -92.80 },
+      "radiusMiles": 30,
+      "timezone": "America/Chicago",
+      "circuityFactor": 1.3,
+      "cbsaCode": "33460",
+      "fipsCountyCodes": ["27053", "27123", "27003", "27037", "27139"],
+      "tier": "active",
+      "wave": 1,
+      "heroImage": "/images/minneapolis.jpg",
+      "tagline": "Twin Cities healthcare — Mayo Clinic feeder, Allina Health, M Health Fairview",
+      "hospitalCount": 24,
+      "metroPop": 3690512,
+      "avgRent1br": 1350,
+      "costOfLiving": 99.5,
+      "gsa": {
+        "primaryCounty": "Hennepin",
+        "lodgingRate": 154,
+        "mieRate": 74,
+        "isNonStandard": true
+      },
+      "featureFlags": {
+        "stipendFitEnabled": true,
+        "hwciEnabled": true,
+        "affiliateLinksEnabled": true
+      }
+    },
+    {
+      "metroId": "metro-san-antonio",
+      "slug": "san-antonio-tx",
+      "name": "San Antonio, TX",
+      "stateCode": "TX",
+      "center": { "lat": 29.4241, "lng": -98.4936 },
+      "boundingBox": { "latMin": 29.10, "latMax": 29.80, "lngMin": -98.95, "lngMax": -98.05 },
+      "radiusMiles": 25,
+      "timezone": "America/Chicago",
+      "circuityFactor": 1.3,
+      "cbsaCode": "41700",
+      "fipsCountyCodes": ["48029", "48091", "48187", "48259"],
+      "tier": "active",
+      "wave": 1,
+      "heroImage": "/images/san-antonio.jpg",
+      "tagline": "Military medical capital — BAMC, UT Health, Methodist Healthcare",
+      "hospitalCount": 18,
+      "metroPop": 2558143,
+      "avgRent1br": 1100,
+      "costOfLiving": 90.8,
+      "gsa": {
+        "primaryCounty": "Bexar",
+        "lodgingRate": 117,
+        "mieRate": 74,
+        "isNonStandard": true
+      },
+      "featureFlags": {
+        "stipendFitEnabled": true,
+        "hwciEnabled": true,
+        "affiliateLinksEnabled": true
+      }
+    }
+  ]
+}
