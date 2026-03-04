@@ -131,13 +131,13 @@ async function seed() {
     });
 
     const rows = await sql`
-      INSERT INTO listings (metro_id, external_id, source, source_url, affiliate_url, title, description, property_type, location, address, city, state_code, zip_code, bedrooms, bathrooms, sqft, price_monthly, is_furnished, lease_min_months, allows_pets, has_parking, has_in_unit_laundry, amenities, primary_image_url, image_count, listing_quality_score, status, is_verified, available_date)
+      INSERT INTO listings (metro_id, external_id, source, source_url, is_featured, title, description, property_type, location, address, city, state_code, zip_code, bedrooms, bathrooms, sqft, price_monthly, is_furnished, lease_min_months, allows_pets, has_parking, has_in_unit_laundry, amenities, primary_image_url, image_count, listing_quality_score, status, is_verified, available_date)
       VALUES (
         ${dbMetroId}::uuid,
         ${l.externalId ?? l.id},
         ${l.source},
         ${l.sourceUrl ?? null},
-        ${l.affiliateUrl ?? null},
+        ${l.isFeatured ?? false},
         ${l.title},
         ${l.description ?? null},
         ${l.propertyType},

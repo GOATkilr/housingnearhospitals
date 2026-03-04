@@ -30,14 +30,15 @@ export default function TermsPage() {
             </div>
 
             <div>
-              <h2 className="text-xl font-bold text-slate-900 mb-3">Affiliate Disclosure</h2>
+              <h2 className="text-xl font-bold text-slate-900 mb-3">Advertising &amp; Revenue Disclosure</h2>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Housing Near Hospitals participates in affiliate programs with housing platforms
-                including Furnished Finder and Apartments.com. When you click on a listing link and
-                complete a transaction on a partner site, we may earn a commission at no additional
-                cost to you. Affiliate relationships do not influence our proximity scores or
-                ranking algorithms — all scores are calculated purely based on distance and listing
-                quality factors.
+                Housing Near Hospitals may display advertisements, sponsored content, and featured
+                listings from third-party partners including staffing agencies, housing platforms,
+                and service providers. We may also earn commissions when you use partner services
+                linked from our site, at no additional cost to you. Advertising and partnership
+                relationships do not influence our proximity scores or ranking algorithms — all
+                scores are calculated purely based on distance and listing quality factors.
+                Sponsored content is always labeled as such.
               </p>
             </div>
 

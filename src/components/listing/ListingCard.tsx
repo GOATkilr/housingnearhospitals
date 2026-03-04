@@ -48,6 +48,12 @@ export function ListingCard({ listing, score, className }: ListingCardProps) {
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex gap-1.5">
+          {listing.isFeatured && (
+            <span className="bg-amber-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              Featured
+            </span>
+          )}
           {listing.isVerified && (
             <span className="bg-emerald-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
               <Sparkles className="w-3 h-3" />
@@ -120,10 +126,8 @@ export function ListingCard({ listing, score, className }: ListingCardProps) {
         {/* CTA */}
         <div className="mt-4">
           <Link
-            href={listing.affiliateUrl ?? listing.sourceUrl ?? `/listing/${listing.id}`}
+            href={`/listing/${listing.id}`}
             className="btn-primary w-full text-sm text-center block"
-            target={listing.affiliateUrl ? "_blank" : undefined}
-            rel={listing.affiliateUrl ? "noopener sponsored" : undefined}
           >
             View Details
           </Link>

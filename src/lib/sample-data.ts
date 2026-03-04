@@ -2652,7 +2652,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 85,
     status: "active",
     isVerified: true,
-    affiliateUrl: "https://www.furnishedfinder.com/housing/Nashville--TN",
+    isFeatured: false,
   },
   {
     id: "list-2",
@@ -2681,7 +2681,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 70,
     status: "active",
     isVerified: true,
-    affiliateUrl: "https://www.furnishedfinder.com/housing/Nashville--TN",
+    isFeatured: false,
   },
   {
     id: "list-3",
@@ -2710,7 +2710,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 60,
     status: "active",
     isVerified: false,
-    affiliateUrl: "https://www.apartments.com/nashville-tn/",
+    isFeatured: false,
   },
   {
     id: "list-4",
@@ -2739,7 +2739,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 90,
     status: "active",
     isVerified: true,
-    affiliateUrl: "https://www.furnishedfinder.com/housing/Nashville--TN",
+    isFeatured: false,
   },
   {
     id: "list-5",
@@ -2768,7 +2768,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 65,
     status: "active",
     isVerified: false,
-    affiliateUrl: "https://www.furnishedfinder.com/housing/Nashville--TN",
+    isFeatured: false,
   },
   {
     id: "list-6",
@@ -2797,7 +2797,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 55,
     status: "active",
     isVerified: true,
-    affiliateUrl: "https://www.apartments.com/nashville-tn/",
+    isFeatured: false,
   },
   // Houston
   {
@@ -2827,7 +2827,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 80,
     status: "active",
     isVerified: true,
-    affiliateUrl: "https://www.furnishedfinder.com/housing/Houston--TX",
+    isFeatured: false,
   },
   {
     id: "list-8",
@@ -2856,7 +2856,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 70,
     status: "active",
     isVerified: true,
-    affiliateUrl: "https://www.apartments.com/houston-tx/",
+    isFeatured: false,
   },
   {
     id: "list-9",
@@ -2885,7 +2885,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 75,
     status: "active",
     isVerified: false,
-    affiliateUrl: "https://www.furnishedfinder.com/housing/Houston--TX",
+    isFeatured: false,
   },
   {
     id: "list-10",
@@ -2914,7 +2914,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 60,
     status: "active",
     isVerified: false,
-    affiliateUrl: "https://www.furnishedfinder.com/housing/Houston--TX",
+    isFeatured: false,
   },
   // Phoenix
   {
@@ -2944,7 +2944,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 85,
     status: "active",
     isVerified: true,
-    affiliateUrl: "https://www.furnishedfinder.com/housing/Scottsdale--AZ",
+    isFeatured: false,
   },
   {
     id: "list-12",
@@ -2973,7 +2973,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 65,
     status: "active",
     isVerified: true,
-    affiliateUrl: "https://www.apartments.com/phoenix-az/",
+    isFeatured: false,
   },
   {
     id: "list-13",
@@ -3002,7 +3002,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 70,
     status: "active",
     isVerified: false,
-    affiliateUrl: "https://www.furnishedfinder.com/housing/Tempe--AZ",
+    isFeatured: false,
   },
   {
     id: "list-14",
@@ -3031,6 +3031,6 @@ export const SAMPLE_LISTINGS: Listing[] = [
     listingQualityScore: 60,
     status: "active",
     isVerified: true,
-    affiliateUrl: "https://www.apartments.com/phoenix-az/",
+    isFeatured: false,
   },
 ];

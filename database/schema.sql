@@ -111,9 +111,10 @@ CREATE TABLE listings (
     metro_id            UUID NOT NULL REFERENCES metros(id) ON DELETE CASCADE,
     neighborhood_id     UUID REFERENCES neighborhoods(id) ON DELETE SET NULL,
     external_id         VARCHAR(200),                           -- ID from source platform
-    source              VARCHAR(50) NOT NULL DEFAULT 'manual',  -- manual, apartments_com, zillow, furnished_finder, airbnb
-    source_url          VARCHAR(1000),                          -- Original listing URL
-    affiliate_url       VARCHAR(1000),                          -- Monetized link
+    source              VARCHAR(50) NOT NULL DEFAULT 'manual',  -- manual, self_serve, aggregated, imported
+    source_url          VARCHAR(1000),                          -- Original listing URL if aggregated
+    is_featured         BOOLEAN DEFAULT false,                  -- Paid featured placement
+    featured_until      TIMESTAMPTZ,                            -- Featured listing expiration
 
     -- Property details
     title               VARCHAR(500) NOT NULL,
@@ -333,32 +334,60 @@ CREATE INDEX idx_alerts_user ON search_alerts(user_id);
 CREATE INDEX idx_alerts_active ON search_alerts(is_active) WHERE is_active = true;
 
 -- ============================================================
--- CLICK TRACKING (for affiliate revenue attribution)
+-- ENGAGEMENT TRACKING (for analytics and ad performance)
 -- ============================================================
 CREATE TABLE click_events (
     id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id         UUID REFERENCES users(id) ON DELETE SET NULL,
-    listing_id      UUID NOT NULL REFERENCES listings(id) ON DELETE CASCADE,
+    listing_id      UUID REFERENCES listings(id) ON DELETE CASCADE,
     hospital_id     UUID REFERENCES hospitals(id) ON DELETE SET NULL,
-    event_type      VARCHAR(30) NOT NULL DEFAULT 'click',   -- click, view, save, share, apply
-    source          VARCHAR(50),                             -- search, map, hospital_page, alert_email
-    affiliate_url   VARCHAR(1000),
+    event_type      VARCHAR(30) NOT NULL DEFAULT 'click',   -- click, view, save, share, contact, ad_click, ad_impression
+    source          VARCHAR(50),                             -- search, map, hospital_page, alert_email, ad_sidebar, ad_banner, ad_interstitial
+    ad_placement_id UUID REFERENCES ad_placements(id) ON DELETE SET NULL,
     ip_hash         VARCHAR(64),                            -- Hashed for privacy
     user_agent      VARCHAR(500),
     session_id      VARCHAR(100),
     created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_clicks_listing ON click_events(listing_id, created_at DESC);
+CREATE INDEX idx_clicks_listing ON click_events(listing_id, created_at DESC) WHERE listing_id IS NOT NULL;
 CREATE INDEX idx_clicks_hospital ON click_events(hospital_id, created_at DESC) WHERE hospital_id IS NOT NULL;
 CREATE INDEX idx_clicks_date ON click_events(created_at DESC);
+CREATE INDEX idx_clicks_ad ON click_events(ad_placement_id, created_at DESC) WHERE ad_placement_id IS NOT NULL;
+
+-- ============================================================
+-- AD PLACEMENTS (for direct-sold ads and sponsorships)
+-- ============================================================
+CREATE TABLE ad_placements (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    advertiser_name VARCHAR(200) NOT NULL,                  -- e.g. "Aya Healthcare", "Cross Country"
+    ad_type         VARCHAR(50) NOT NULL,                   -- banner, sidebar, interstitial, sponsor, native
+    placement_zone  VARCHAR(50) NOT NULL,                   -- header, sidebar, listing_feed, hospital_page, footer
+    title           VARCHAR(200),
+    description     TEXT,
+    image_url       VARCHAR(1000),
+    click_url       VARCHAR(1000) NOT NULL,
+    alt_text        VARCHAR(300),
+    metro_id        UUID REFERENCES metros(id) ON DELETE SET NULL, -- NULL = all metros
+    is_active       BOOLEAN DEFAULT true,
+    priority        INTEGER DEFAULT 0,                      -- Higher = shown first
+    impressions     INTEGER DEFAULT 0,
+    clicks          INTEGER DEFAULT 0,
+    starts_at       TIMESTAMPTZ DEFAULT NOW(),
+    ends_at         TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_ads_active ON ad_placements(is_active, placement_zone) WHERE is_active = true;
+CREATE INDEX idx_ads_metro ON ad_placements(metro_id) WHERE metro_id IS NOT NULL;
 
 -- ============================================================
 -- DATA IMPORT LOG
 -- ============================================================
 CREATE TABLE import_logs (
     id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    source          VARCHAR(50) NOT NULL,                   -- hifld, cms, apartments_com, manual
+    source          VARCHAR(50) NOT NULL,                   -- hifld, cms, manual, self_serve, aggregated
     entity_type     VARCHAR(30) NOT NULL,                   -- hospital, listing
     metro_id        UUID REFERENCES metros(id),
     records_total   INTEGER,
@@ -458,8 +487,8 @@ SELECT
     l.has_in_unit_laundry,
     l.primary_image_url,
     l.source,
-    l.affiliate_url,
     l.source_url,
+    l.is_featured,
     l.listing_quality_score,
     l.location AS listing_location,
     h.location AS hospital_location,

@@ -155,17 +155,17 @@ Homepage
 
 ### Housing Data Sources
 
-#### Phase 1: Affiliate Links (Launch)
-- **Apartments.com API** (via CJ Affiliate) — largest apartment inventory
-- **Zillow Partner API** — broad MLS access
-- **Furnished Finder** (manual partnership) — travel nurse specific
-- **Airbnb Affiliate** — furnished short-term
-- Strategy: Deep-link to external listings, earn per-click or per-lease commission
+#### Phase 1: Free Direct Listings (Launch)
+- Allow landlords to list properties for **free** to maximize supply
+- Manual listing submission via admin dashboard and self-serve form
+- Curated seed data for launch markets to bootstrap inventory
+- Strategy: Maximize listing volume to drive search traffic; monetize via ads, not listings
 
-#### Phase 2: Direct Listings (Month 3+)
-- Allow landlords to post directly on the platform
-- Charge listing fee ($49-149/month) or lead fee ($25-50/lead)
+#### Phase 2: Scaled Listings + Aggregation (Month 3+)
+- Self-serve landlord listing portal with verification
+- Scrape/aggregate public rental data (Craigslist, Facebook Marketplace) for discovery
 - Focus on furnished units and short-term leases
+- Featured/premium listing upgrades available (paid tier)
 
 #### Phase 3: MLS/IDX Integration (Month 6+)
 - Partner with local MLS boards for real-time listing data
@@ -401,49 +401,89 @@ Generate landing pages for every hospital in every metro:
 
 ## H. Monetization Strategy
 
+### Strategic Principle: Monetize the Audience, Not the Listings
+
+Healthcare workers making housing decisions are an extremely valuable advertising audience — high income, urgent purchasing intent, and highly sought after by staffing agencies, insurance companies, and relocation services. Rather than charging landlords or relying on unviable affiliate programs, we maximize supply and demand by keeping listings free and monetize through advertising, sponsorships, and eventually featured placements.
+
+> **Why not affiliate revenue?** Research shows that Furnished Finder has no affiliate program (they're a search platform, not a booking platform). Zillow's affiliate program is inactive. Airbnb's ended in 2021 and requires 1M+ monthly visitors. Apartments.com's CJ program pays ~$6/lead, not $25-75. The original affiliate strategy was built on programs that don't exist.
+
 ### Revenue Streams (Phased)
 
-#### Phase 1: Affiliate Revenue (Launch — Month 6)
-| Partner | Model | Est. Revenue/Click |
-|---------|-------|-------------------|
-| Apartments.com | CPA (Cost Per Acquisition) | $25-75 per signed lease |
-| Zillow | CPC (Cost Per Click) | $0.50-2.00 per click |
-| Furnished Finder | Revenue share | $15-30 per booking |
-| Airbnb | Affiliate | 1-3% of booking |
+#### Phase 1: Free Listings + Display Ads + Adjacent Affiliates (Launch — Month 6)
 
-**Target**: $5K-15K/month by Month 6
+**All listings are free.** This maximizes supply (landlords list easily) and demand (nurses find options), building traffic as fast as possible.
 
-#### Phase 2: Direct Listings (Month 3-12)
-| Tier | Price | Features |
-|------|-------|---------|
-| Basic Listing | Free | Appear in results, no priority |
-| Featured Listing | $99/month | Priority placement, badge, analytics |
-| Premium Listing | $199/month | Featured + lead contact info + social proof |
+| Revenue Source | Model | Est. Revenue |
+|----------------|-------|-------------|
+| Google AdSense | Display ads (CPM/CPC) | $5-15 RPM (real estate is high-CPC niche) |
+| Renter's insurance affiliate (Lemonade, etc.) | CPA | $25-50 per policy |
+| Furniture rental affiliate (CORT) | CPA | $15-30 per booking |
+| Moving services affiliate (PODS, HireAHelper) | CPA/CPC | $10-25 per lead |
+| Travel nurse tax prep services | CPA | $20-40 per signup |
 
-**Target**: $10K-30K/month by Month 12
+These adjacent affiliate programs **actually exist** and serve real needs for healthcare workers who are relocating — they need insurance, furniture, and moving help.
 
-#### Phase 3: Lead Generation (Month 6-18)
-- Sell qualified leads to property managers ($25-50/lead)
-- Travel nurse staffing agency partnerships (referral fee per placement)
-- Hospital system partnerships (employee housing benefit programs)
+**Target**: $2K-8K/month by Month 6
 
-**Target**: $30K-80K/month by Month 18
+#### Phase 2: Staffing Agency Ads + Sponsored Content + Premium Ad Network (Month 3-12)
 
-#### Phase 4: SaaS (Month 12+)
-- Hospital HR departments: employee housing portal ($500-2000/month)
-- Travel nurse agencies: white-label housing search ($1000-5000/month)
-- Property management companies: healthcare worker CRM ($200-500/month)
+Travel nurse staffing agencies (Aya Healthcare, Cross Country, Medical Solutions, AMN Healthcare) spend heavily on recruitment marketing. Our audience is **exactly** who they want to reach.
+
+| Revenue Source | Model | Est. Revenue |
+|----------------|-------|-------------|
+| Staffing agency display ads | Direct ad sales | $500-2,000/month per agency |
+| Sponsored city/hospital guides | Content sponsorship | $200-500 per guide |
+| Premium ad network (Mediavine/Raptive) | Display ads (requires 50K-100K sessions/mo) | $15-40 RPM at scale |
+| Email newsletter sponsorship | Sponsored weekly digest | $200-500 per send |
+| Sidebar partner placements | Fixed placement | $300-800/month |
+
+**Target**: $8K-25K/month by Month 12
+
+#### Phase 3: Featured Listings + Lead Generation (Month 6-18)
+
+Once traffic is established, landlords and property managers will pay for visibility. Not before — supply-side monetization only works after demand exists.
+
+| Revenue Source | Model | Est. Revenue |
+|----------------|-------|-------------|
+| Featured listing upgrade | $49/month | Priority placement, "Featured" badge |
+| Premium listing | $99/month | Featured + analytics dashboard + lead contact info |
+| Qualified lead sales | $25-50/lead to property managers | Volume-dependent |
+| Hospital partnership housing portals | Sponsored sections | $500-1,500/month |
+
+**Target**: $15K-40K/month by Month 18
+
+#### Phase 4: B2B Partnerships + SaaS (Month 12+)
+- Hospital HR departments: employee housing portal ($500-2,000/month)
+- Travel nurse agencies: white-label housing search ($1,000-5,000/month)
+- Property management companies: healthcare worker tenant pipeline ($200-500/month)
+
+### Ad Placement Strategy
+
+The platform includes designated ad zones that balance revenue with user experience:
+
+| Placement | Location | Type | Priority |
+|-----------|----------|------|----------|
+| **Header Banner** | Top of search results | Staffing agency ads | High |
+| **Sidebar** | Right column on desktop | Display ads / partner placements | Medium |
+| **Interstitial** | Between every 4th listing in results | Native ad unit | High |
+| **Hospital Page Sponsor** | Hospital detail pages | Staffing agency "Now Hiring" | High |
+| **Footer Partners** | Site footer | Partner logo bar | Low |
+| **Email Digest** | Weekly alert emails | Sponsored section | Medium |
 
 ### Unit Economics Target
 
 | Metric | Month 6 | Month 12 | Month 18 |
 |--------|---------|----------|----------|
 | Monthly Unique Visitors | 15K | 75K | 200K |
-| Conversion Rate (click-through) | 3% | 4% | 5% |
-| Revenue Per Click | $1.50 | $2.50 | $4.00 |
-| Monthly Revenue | $6.75K | $30K | $80K |
-| Monthly Costs | $3K | $8K | $20K |
-| Monthly Profit | $3.75K | $22K | $60K |
+| Page RPM (ad revenue per 1K pageviews) | $8 | $20 | $30 |
+| Avg Pages Per Visit | 3.5 | 4.0 | 4.5 |
+| Display Ad Revenue | $1.6K | $12K | $27K |
+| Sponsorship + Direct Ads | $1K | $8K | $15K |
+| Adjacent Affiliate Revenue | $0.5K | $2K | $4K |
+| Featured Listings Revenue | $0 | $3K | $12K |
+| **Total Monthly Revenue** | **$3.1K** | **$25K** | **$58K** |
+| Monthly Costs | $2K | $6K | $15K |
+| **Monthly Profit** | **$1.1K** | **$19K** | **$43K** |
 
 ---
 
@@ -451,7 +491,7 @@ Generate landing pages for every hospital in every metro:
 
 ### Pre-Launch (Weeks 1-4)
 
-1. **Build MVP** — Hospital search + proximity scoring + affiliate links
+1. **Build MVP** — Hospital search + proximity scoring + ad zone scaffolding
 2. **Seed data** — Import all hospitals for Nashville, Houston, Phoenix
 3. **Content** — Write 10 SEO-optimized city/hospital pages
 4. **Social** — Create accounts on Instagram, TikTok, Facebook Groups

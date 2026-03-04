@@ -197,8 +197,8 @@ export default function TravelNurseGuidePage() {
                 <span className="w-7 h-7 bg-brand-100 text-brand-700 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
                 <div>
                   <strong className="text-slate-900">Start searching 4-6 weeks early.</strong> The best
-                  furnished rentals near hospitals get booked fast. Set alerts on Furnished Finder and check
-                  Housing Near Hospitals for proximity-scored options.
+                  furnished rentals near hospitals get booked fast. Check Housing Near Hospitals for
+                  proximity-scored options, and browse platforms like Furnished Finder for additional listings.
                 </div>
               </li>
               <li className="flex gap-3">
@@ -274,8 +274,8 @@ export default function TravelNurseGuidePage() {
                   a: "We recommend staying within 20 minutes of your hospital. Our scoring system gives the highest scores to listings under 10 minutes away. After 12-hour shifts — especially night shifts — a short commute isn't just convenient, it's a safety issue.",
                 },
                 {
-                  q: "What's the difference between Furnished Finder and Apartments.com?",
-                  a: "Furnished Finder specializes in furnished, short-term rentals specifically for travel healthcare workers. Listings are often from individual landlords who understand travel nurse needs. Apartments.com covers the broader rental market including unfurnished, long-term apartments. Use Furnished Finder for ready-to-move-in options, and Apartments.com when you want more choices or plan to furnish your own place.",
+                  q: "What's the difference between travel nurse housing platforms and general rental sites?",
+                  a: "Platforms like Furnished Finder specialize in furnished, short-term rentals specifically for travel healthcare workers. Listings are often from individual landlords who understand travel nurse needs. General rental sites like Apartments.com cover the broader market including unfurnished, long-term apartments. Use specialized platforms for ready-to-move-in options, and general sites when you want more choices or plan to furnish your own place. Housing Near Hospitals helps by scoring all options by proximity to your hospital.",
                 },
               ].map((faq) => (
                 <div key={faq.q} className="bg-white rounded-xl border border-slate-200 p-5">

@@ -87,7 +87,7 @@ export function Footer() {
 
         <div className="border-t border-slate-800 mt-10 pt-6 space-y-3 text-sm text-center">
           <p className="text-slate-500 text-xs">
-            Housing Near Hospitals may earn commissions from partner links. This does not affect our rankings.
+            Housing Near Hospitals may display ads and earn revenue from partners. This does not affect our rankings or proximity scores.
           </p>
           <p>
             &copy; {new Date().getFullYear()} {SITE_NAME}. Built for healthcare workers.

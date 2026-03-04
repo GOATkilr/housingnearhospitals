@@ -33,7 +33,8 @@ export default function AdminSettingsPage() {
           <SettingRow label="Map Integration" value="Placeholder mode" status="demo" />
           <SettingRow label="User Reviews" value="Disabled" status="inactive" />
           <SettingRow label="Search Alerts" value="Disabled" status="inactive" />
-          <SettingRow label="Affiliate Links" value="Disabled" status="inactive" />
+          <SettingRow label="Ad Placements" value="Hidden (pre-growth)" status="inactive" />
+          <SettingRow label="Featured Listings" value="Disabled" status="inactive" />
         </SettingsSection>
       </div>
     </div>

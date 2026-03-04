@@ -61,7 +61,8 @@ export interface Listing {
   externalId?: string;
   source: ListingSource;
   sourceUrl?: string;
-  affiliateUrl?: string;
+  isFeatured: boolean;
+  featuredUntil?: string;
   title: string;
   description?: string;
   propertyType: PropertyType;
@@ -90,10 +91,9 @@ export interface Listing {
 
 export type ListingSource =
   | "manual"
-  | "apartments_com"
-  | "zillow"
-  | "furnished_finder"
-  | "airbnb";
+  | "self_serve"
+  | "aggregated"
+  | "imported";
 
 export type PropertyType =
   | "apartment"
@@ -178,4 +178,23 @@ export interface ScoreBandInfo {
   color: string;
   bgColor: string;
   minScore: number;
+}
+
+// Ad placement types
+export type AdType = "banner" | "sidebar" | "interstitial" | "sponsor" | "native";
+export type AdPlacementZone = "header" | "sidebar" | "listing_feed" | "hospital_page" | "footer";
+
+export interface AdPlacement {
+  id: string;
+  advertiserName: string;
+  adType: AdType;
+  placementZone: AdPlacementZone;
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+  clickUrl: string;
+  altText?: string;
+  metroId?: string;
+  isActive: boolean;
+  priority: number;
 }
