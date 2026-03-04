@@ -50,8 +50,43 @@ export default function ListingPage({ params }: ListingPageProps) {
     })
     .sort((a, b) => b.scoreData.proximityScore - a.scoreData.proximityScore);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Accommodation",
+    name: listing.title,
+    description: listing.description,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: listing.address,
+      addressLocality: listing.city,
+      addressRegion: listing.stateCode,
+      postalCode: listing.zipCode,
+      addressCountry: "US",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: listing.location.lat,
+      longitude: listing.location.lng,
+    },
+    floorSize: listing.sqft
+      ? { "@type": "QuantitativeValue", value: listing.sqft, unitCode: "FTK" }
+      : undefined,
+    numberOfBedrooms: listing.bedrooms,
+    numberOfBathroomsTotal: listing.bathrooms,
+    offers: {
+      "@type": "Offer",
+      price: listing.priceMonthly,
+      priceCurrency: "USD",
+      unitCode: "MON",
+    },
+  };
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Header */}
       <section className="bg-gradient-to-b from-brand-900 to-brand-800 text-white py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,9 +109,16 @@ export default function ListingPage({ params }: ListingPageProps) {
         <div className="grid lg:grid-cols-[1fr_360px] gap-8">
           {/* Main content */}
           <div className="space-y-6">
-            {/* Image placeholder */}
-            <div className="bg-slate-100 rounded-xl h-72 flex items-center justify-center">
-              <Building2 className="w-16 h-16 text-slate-300" />
+            {/* Listing image */}
+            <div
+              className="bg-slate-100 rounded-xl h-72 bg-cover bg-center"
+              style={{ backgroundImage: listing.primaryImageUrl ? `url(${listing.primaryImageUrl})` : undefined }}
+            >
+              {!listing.primaryImageUrl && (
+                <div className="flex items-center justify-center h-full">
+                  <Building2 className="w-16 h-16 text-slate-300" />
+                </div>
+              )}
             </div>
 
             {/* Details */}

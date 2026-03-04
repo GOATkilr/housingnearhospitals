@@ -73,8 +73,37 @@ export default function HospitalPage({ params }: HospitalPageProps) {
     })
     .sort((a, b) => b.score.proximityScore - a.score.proximityScore);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "MedicalOrganization",
+    name: hospital.name,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: hospital.address,
+      addressLocality: hospital.city,
+      addressRegion: hospital.stateCode,
+      postalCode: hospital.zipCode,
+      addressCountry: "US",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: hospital.location.lat,
+      longitude: hospital.location.lng,
+    },
+    ...(hospital.phone && { telephone: hospital.phone }),
+    ...(hospital.website && { url: hospital.website }),
+    ...(hospital.bedCount && {
+      numberOfBeds: hospital.bedCount,
+    }),
+    medicalSpecialty: hospital.hospitalType,
+  };
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Breadcrumb + Hospital Header */}
       <section className="bg-gradient-to-b from-brand-900 to-brand-800 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

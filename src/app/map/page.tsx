@@ -1,16 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Building2, MapPin } from "lucide-react";
-import { SAMPLE_HOSPITALS } from "@/lib/sample-data";
-import { LAUNCH_METROS } from "@/lib/constants";
+import { SAMPLE_HOSPITALS, SAMPLE_LISTINGS } from "@/lib/sample-data";
+import { LAUNCH_METROS, HOSPITAL_PIN_COLOR, LISTING_PIN_COLOR, MAP_DEFAULT_ZOOM } from "@/lib/constants";
 import { HospitalCard } from "@/components/hospital/HospitalCard";
+import dynamic from "next/dynamic";
+
+const MapView = dynamic(() => import("@/components/map/MapView"), { ssr: false });
+
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 export default function MapPage() {
   const [selectedMetro, setSelectedMetro] = useState<string>(LAUNCH_METROS[0].slug);
 
   const metro = LAUNCH_METROS.find((m) => m.slug === selectedMetro);
-  const hospitals = SAMPLE_HOSPITALS.filter((h) => h.metroId === metro?.metroId);
+  const hospitals = useMemo(
+    () => SAMPLE_HOSPITALS.filter((h) => h.metroId === metro?.metroId),
+    [metro?.metroId]
+  );
+  const listings = useMemo(
+    () => SAMPLE_LISTINGS.filter((l) => l.metroId === metro?.metroId),
+    [metro?.metroId]
+  );
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -45,36 +57,42 @@ export default function MapPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid lg:grid-cols-[1fr_350px] gap-6">
-          {/* Map placeholder */}
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden min-h-[600px] flex flex-col items-center justify-center text-slate-400">
-            <div className="text-center p-8">
-              <MapPin className="w-16 h-16 mx-auto mb-4 text-slate-200" />
-              <h3 className="text-lg font-semibold text-slate-600 mb-2">Interactive Map</h3>
-              <p className="text-sm text-slate-400 max-w-sm mx-auto mb-4">
-                Add your Mapbox token to <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded">NEXT_PUBLIC_MAPBOX_TOKEN</code> in your environment to enable the interactive map.
-              </p>
-              <p className="text-sm text-slate-400">
-                The map will show hospital pins (blue) and listing clusters (green) with proximity scoring overlays.
-              </p>
-
-              {/* Static preview of what the map would show */}
-              <div className="mt-6 bg-slate-50 rounded-lg p-4 text-left">
-                <p className="text-xs font-medium text-slate-500 mb-2">
-                  {metro?.name} — {hospitals.length} hospitals
+          {/* Map */}
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden min-h-[600px]">
+            {MAPBOX_TOKEN && metro ? (
+              <MapView
+                token={MAPBOX_TOKEN}
+                center={metro.center}
+                zoom={MAP_DEFAULT_ZOOM}
+                hospitals={hospitals}
+                listings={listings}
+                metroSlug={selectedMetro}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-slate-400 p-8">
+                <MapPin className="w-16 h-16 mx-auto mb-4 text-slate-200" />
+                <h3 className="text-lg font-semibold text-slate-600 mb-2">Interactive Map</h3>
+                <p className="text-sm text-slate-400 max-w-sm mx-auto mb-4">
+                  Add your Mapbox token to <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded">NEXT_PUBLIC_MAPBOX_TOKEN</code> in your environment to enable the interactive map.
                 </p>
-                <div className="space-y-1">
-                  {hospitals.slice(0, 5).map((h) => (
-                    <div key={h.id} className="flex items-center gap-2 text-xs text-slate-500">
-                      <div className="w-2 h-2 bg-brand-600 rounded-full" />
-                      <span className="truncate">{h.name}</span>
-                      <span className="text-slate-300 ml-auto">
-                        {h.location.lat.toFixed(4)}, {h.location.lng.toFixed(4)}
-                      </span>
-                    </div>
-                  ))}
+                <div className="mt-4 bg-slate-50 rounded-lg p-4 text-left w-full max-w-md">
+                  <p className="text-xs font-medium text-slate-500 mb-2">
+                    {metro?.name} — {hospitals.length} hospitals
+                  </p>
+                  <div className="space-y-1">
+                    {hospitals.slice(0, 5).map((h) => (
+                      <div key={h.id} className="flex items-center gap-2 text-xs text-slate-500">
+                        <div className="w-2 h-2 bg-brand-600 rounded-full" />
+                        <span className="truncate">{h.name}</span>
+                        <span className="text-slate-300 ml-auto">
+                          {h.location.lat.toFixed(4)}, {h.location.lng.toFixed(4)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Hospital sidebar */}

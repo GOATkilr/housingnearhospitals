@@ -76,12 +76,22 @@ export function Footer() {
                   Privacy Policy
                 </Link>
               </li>
+              <li>
+                <Link href="/terms" className="text-sm hover:text-white transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-slate-800 mt-10 pt-6 text-sm text-center">
-          &copy; {new Date().getFullYear()} {SITE_NAME}. Built for healthcare workers.
+        <div className="border-t border-slate-800 mt-10 pt-6 space-y-3 text-sm text-center">
+          <p className="text-slate-500 text-xs">
+            Housing Near Hospitals may earn commissions from partner links. This does not affect our rankings.
+          </p>
+          <p>
+            &copy; {new Date().getFullYear()} {SITE_NAME}. Built for healthcare workers.
+          </p>
         </div>
       </div>
     </footer>
