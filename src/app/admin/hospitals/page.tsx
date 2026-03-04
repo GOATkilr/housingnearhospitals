@@ -1,12 +1,21 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Building2, ArrowLeft, Search, Plus } from "lucide-react";
-import { SAMPLE_HOSPITALS } from "@/lib/sample-data";
-import { LAUNCH_METROS } from "@/lib/constants";
 import { formatNumber } from "@/lib/utils";
+import type { Hospital } from "@/types";
 
 export default function AdminHospitalsPage() {
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/hospitals?limit=100")
+      .then((r) => r.json())
+      .then((data) => setHospitals(data.data ?? []))
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="bg-white border-b border-slate-200">
@@ -18,7 +27,7 @@ export default function AdminHospitalsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Hospital Management</h1>
-              <p className="text-sm text-slate-500 mt-1">{SAMPLE_HOSPITALS.length} hospitals across {LAUNCH_METROS.length} metros</p>
+              <p className="text-sm text-slate-500 mt-1">{hospitals.length} hospitals</p>
             </div>
             <button className="btn-primary text-sm flex items-center gap-2" disabled>
               <Plus className="w-4 h-4" />
@@ -42,8 +51,7 @@ export default function AdminHospitalsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {SAMPLE_HOSPITALS.map((h) => {
-                const metro = LAUNCH_METROS.find((m) => m.metroId === h.metroId);
+              {hospitals.map((h) => {
                 return (
                   <tr key={h.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3">
@@ -52,7 +60,7 @@ export default function AdminHospitalsPage() {
                         <p className="text-xs text-slate-400">{h.city}, {h.stateCode}</p>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{metro?.name ?? "—"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600">{h.city}, {h.stateCode}</td>
                     <td className="px-4 py-3 text-sm text-slate-600">{h.hospitalType}</td>
                     <td className="px-4 py-3 text-sm text-slate-600 font-mono">{h.bedCount ? formatNumber(h.bedCount) : "—"}</td>
                     <td className="px-4 py-3 text-sm text-slate-600">{h.cmsOverallRating ? `${h.cmsOverallRating}/5` : "—"}</td>

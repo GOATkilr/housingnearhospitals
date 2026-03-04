@@ -4,9 +4,7 @@ import {
   Building2, MapPin, Bed, Bath, Maximize, Armchair, PawPrint, Car,
   ArrowLeft, Sparkles
 } from "lucide-react";
-import { SAMPLE_LISTINGS, SAMPLE_HOSPITALS } from "@/lib/sample-data";
-import { getMetroById } from "@/lib/constants";
-import { calculateFullProximityScore } from "@/lib/scoring";
+import { getListingById, getScoresForListing, getAllListingIds, getMetroById } from "@/lib/queries";
 import { ScoreRing } from "@/components/score/ScoreRing";
 import { CommuteBar } from "@/components/score/CommuteBar";
 import { formatPrice } from "@/lib/utils";
@@ -17,11 +15,12 @@ interface ListingPageProps {
 }
 
 export async function generateStaticParams() {
-  return SAMPLE_LISTINGS.map((listing) => ({ id: listing.id }));
+  const ids = await getAllListingIds();
+  return ids.map((id) => ({ id }));
 }
 
 export async function generateMetadata({ params }: ListingPageProps): Promise<Metadata> {
-  const listing = SAMPLE_LISTINGS.find((l) => l.id === params.id);
+  const listing = await getListingById(params.id);
   if (!listing) return {};
   return {
     title: `${listing.title} | Housing Near Hospitals`,
@@ -29,26 +28,16 @@ export async function generateMetadata({ params }: ListingPageProps): Promise<Me
   };
 }
 
-export default function ListingPage({ params }: ListingPageProps) {
-  const listing = SAMPLE_LISTINGS.find((l) => l.id === params.id);
+export default async function ListingPage({ params }: ListingPageProps) {
+  const listing = await getListingById(params.id);
   if (!listing) {
     notFound();
   }
 
-  const metro = getMetroById(listing.metroId);
-  const nearbyHospitals = SAMPLE_HOSPITALS
-    .filter((h) => h.metroId === listing.metroId)
-    .map((hospital) => {
-      const scoreData = calculateFullProximityScore(
-        hospital.location.lat,
-        hospital.location.lng,
-        listing.location.lat,
-        listing.location.lng,
-        metro?.circuityFactor ?? 1.3
-      );
-      return { hospital, scoreData };
-    })
-    .sort((a, b) => b.scoreData.proximityScore - a.scoreData.proximityScore);
+  const [metro, nearbyHospitals] = await Promise.all([
+    getMetroById(listing.metroId),
+    getScoresForListing(listing.id),
+  ]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -190,21 +179,21 @@ export default function ListingPage({ params }: ListingPageProps) {
           {/* Sidebar: Nearby hospitals */}
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-slate-900">Nearby Hospitals</h2>
-            {nearbyHospitals.map(({ hospital, scoreData }) => (
+            {nearbyHospitals.map(({ hospital, score }) => (
               <Link
                 key={hospital.id}
                 href={`/city/${metro?.slug ?? ""}/${hospital.slug}`}
                 className="block bg-white rounded-xl border border-slate-200 p-4 card-hover"
               >
                 <div className="flex items-start gap-3">
-                  <ScoreRing score={scoreData.proximityScore} size="sm" />
+                  <ScoreRing score={score.proximityScore} size="sm" />
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-slate-900 line-clamp-1">{hospital.name}</p>
                     <CommuteBar
-                      driveTimeDayMin={scoreData.driveTimeDayMin}
-                      driveTimeNightMin={scoreData.driveTimeNightMin}
-                      distanceMiles={scoreData.straightLineMiles}
-                      proximityScore={scoreData.proximityScore}
+                      driveTimeDayMin={score.driveTimeDayMin ?? 0}
+                      driveTimeNightMin={score.driveTimeNightMin ?? 0}
+                      distanceMiles={score.straightLineMiles}
+                      proximityScore={score.proximityScore}
                     />
                   </div>
                 </div>

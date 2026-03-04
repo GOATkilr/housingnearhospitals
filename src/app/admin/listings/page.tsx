@@ -1,12 +1,21 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Home, ArrowLeft, Plus } from "lucide-react";
-import { SAMPLE_LISTINGS } from "@/lib/sample-data";
-import { LAUNCH_METROS } from "@/lib/constants";
 import { formatPrice } from "@/lib/utils";
+import type { Listing } from "@/types";
 
 export default function AdminListingsPage() {
+  const [listings, setListings] = useState<Listing[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/listings")
+      .then((r) => r.json())
+      .then((data) => setListings(data.data ?? []))
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="bg-white border-b border-slate-200">
@@ -18,7 +27,7 @@ export default function AdminListingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Listing Management</h1>
-              <p className="text-sm text-slate-500 mt-1">{SAMPLE_LISTINGS.length} listings across all metros</p>
+              <p className="text-sm text-slate-500 mt-1">{listings.length} listings across all metros</p>
             </div>
             <button className="btn-primary text-sm flex items-center gap-2" disabled>
               <Plus className="w-4 h-4" />
@@ -42,8 +51,7 @@ export default function AdminListingsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {SAMPLE_LISTINGS.map((l) => {
-                const metro = LAUNCH_METROS.find((m) => m.metroId === l.metroId);
+              {listings.map((l) => {
                 return (
                   <tr key={l.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3">
@@ -52,7 +60,7 @@ export default function AdminListingsPage() {
                         <p className="text-xs text-slate-400">{l.city}, {l.stateCode}</p>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{metro?.name ?? "—"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600">{l.city}, {l.stateCode}</td>
                     <td className="px-4 py-3 text-sm text-slate-900 font-medium">{formatPrice(l.priceMonthly)}</td>
                     <td className="px-4 py-3 text-sm text-slate-600 capitalize">{l.propertyType}</td>
                     <td className="px-4 py-3">

@@ -1,88 +1,94 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Building2, List, Map as MapIcon } from "lucide-react";
-import { SAMPLE_HOSPITALS, SAMPLE_LISTINGS } from "@/lib/sample-data";
-import { getMetroById } from "@/lib/constants";
 import { HospitalSearch } from "@/components/search/HospitalSearch";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { ListingCard } from "@/components/listing/ListingCard";
-import { calculateFullProximityScore } from "@/lib/scoring";
 import type { Hospital, SearchFilters, HospitalListingScore } from "@/types";
 
+interface SearchResultItem {
+  listing: {
+    id: string;
+    title: string;
+    propertyType: string;
+    location: { lat: number; lng: number };
+    bedrooms?: number;
+    bathrooms?: number;
+    sqft?: number;
+    priceMonthly: number;
+    isFurnished: boolean;
+    leaseMinMonths?: number;
+    allowsPets: boolean;
+    hasParking: boolean;
+    hasInUnitLaundry: boolean;
+    amenities: string[];
+    primaryImageUrl?: string;
+    imageCount: number;
+    listingQualityScore?: number;
+    status: string;
+    isVerified: boolean;
+    [key: string]: unknown;
+  };
+  score: {
+    straightLineMiles: number;
+    driveTimeDayMin?: number;
+    driveTimeNightMin?: number;
+    proximityScore: number;
+    combinedScore?: number;
+  };
+}
+
 export default function SearchPage() {
+  const [allHospitals, setAllHospitals] = useState<Hospital[]>([]);
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [filters, setFilters] = useState<SearchFilters>({ sortBy: "score" });
   const [view, setView] = useState<"list" | "map">("list");
+  const [results, setResults] = useState<SearchResultItem[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const scoredListings = useMemo(() => {
-    if (!selectedHospital) return [];
+  // Load all hospitals for search
+  useEffect(() => {
+    fetch("/api/v1/hospitals?limit=100")
+      .then((r) => r.json())
+      .then((data) => setAllHospitals(data.data ?? []))
+      .catch(() => {});
+  }, []);
 
-    const metroData = getMetroById(selectedHospital.metroId);
-
-    let results = SAMPLE_LISTINGS
-      .filter((l) => l.metroId === selectedHospital.metroId)
-      .map((listing) => {
-        const scoreData = calculateFullProximityScore(
-          selectedHospital.location.lat,
-          selectedHospital.location.lng,
-          listing.location.lat,
-          listing.location.lng,
-          metroData?.circuityFactor ?? 1.3
-        );
-
-        const score: HospitalListingScore = {
-          id: `${selectedHospital.id}-${listing.id}`,
-          hospitalId: selectedHospital.id,
-          listingId: listing.id,
-          straightLineMiles: scoreData.straightLineMiles,
-          estimatedDriveMiles: scoreData.estimatedDriveMiles,
-          driveTimeDayMin: scoreData.driveTimeDayMin,
-          driveTimeNightMin: scoreData.driveTimeNightMin,
-          proximityScore: scoreData.proximityScore,
-          calculationMethod: "haversine",
-        };
-
-        return { listing, score };
-      });
-
-    // Apply filters
-    if (filters.maxPrice) {
-      results = results.filter((r) => r.listing.priceMonthly <= filters.maxPrice!);
+  // Fetch search results when hospital or filters change
+  const fetchResults = useCallback(async () => {
+    if (!selectedHospital) {
+      setResults([]);
+      return;
     }
-    if (filters.minBedrooms !== undefined) {
-      results = results.filter((r) => (r.listing.bedrooms ?? 0) >= filters.minBedrooms!);
-    }
-    if (filters.isFurnished) {
-      results = results.filter((r) => r.listing.isFurnished);
-    }
-    if (filters.allowsPets) {
-      results = results.filter((r) => r.listing.allowsPets);
-    }
-    if (filters.hasParking) {
-      results = results.filter((r) => r.listing.hasParking);
-    }
-    if (filters.minScore) {
-      results = results.filter((r) => r.score.proximityScore >= filters.minScore!);
-    }
+    setLoading(true);
 
-    // Sort
-    switch (filters.sortBy) {
-      case "price_asc":
-        results.sort((a, b) => a.listing.priceMonthly - b.listing.priceMonthly);
-        break;
-      case "price_desc":
-        results.sort((a, b) => b.listing.priceMonthly - a.listing.priceMonthly);
-        break;
-      case "distance":
-        results.sort((a, b) => a.score.straightLineMiles - b.score.straightLineMiles);
-        break;
-      default:
-        results.sort((a, b) => b.score.proximityScore - a.score.proximityScore);
-    }
+    const params = new URLSearchParams({
+      hospital_id: selectedHospital.id,
+      sort: filters.sortBy ?? "score",
+      limit: "50",
+    });
+    if (filters.maxPrice) params.set("max_price", String(filters.maxPrice));
+    if (filters.minBedrooms !== undefined) params.set("min_bedrooms", String(filters.minBedrooms));
+    if (filters.isFurnished) params.set("furnished", "true");
+    if (filters.allowsPets) params.set("pets", "true");
+    if (filters.hasParking) params.set("parking", "true");
+    if (filters.minScore) params.set("min_score", String(filters.minScore));
 
-    return results;
+    try {
+      const r = await fetch(`/api/v1/search?${params}`);
+      const data = await r.json();
+      setResults(data.data ?? []);
+    } catch {
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
   }, [selectedHospital, filters]);
+
+  useEffect(() => {
+    fetchResults();
+  }, [fetchResults]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -91,7 +97,7 @@ export default function SearchPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl font-bold text-slate-900 mb-4">Find housing near your hospital</h1>
           <HospitalSearch
-            hospitals={SAMPLE_HOSPITALS}
+            hospitals={allHospitals}
             onSelect={(h) => setSelectedHospital(h)}
             placeholder="Start typing a hospital name..."
           />
@@ -128,8 +134,9 @@ export default function SearchPage() {
               {/* Results header */}
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm text-slate-600">
-                  <strong>{scoredListings.length}</strong> listings near{" "}
+                  <strong>{results.length}</strong> listings near{" "}
                   <strong>{selectedHospital.name}</strong>
+                  {loading && <span className="ml-2 text-slate-400">Loading...</span>}
                 </p>
                 <div className="flex items-center gap-1 bg-white rounded-lg border border-slate-200 p-1">
                   <button
@@ -147,19 +154,23 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              {scoredListings.length > 0 ? (
+              {results.length > 0 ? (
                 <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                  {scoredListings.map(({ listing, score }) => (
-                    <ListingCard key={listing.id} listing={listing} score={score} />
+                  {results.map(({ listing, score }) => (
+                    <ListingCard
+                      key={listing.id}
+                      listing={listing as unknown as import("@/types").Listing}
+                      score={score as unknown as HospitalListingScore}
+                    />
                   ))}
                 </div>
-              ) : (
+              ) : !loading ? (
                 <div className="text-center py-20 bg-white rounded-xl border border-slate-200">
                   <Building2 className="w-10 h-10 mx-auto mb-3 text-slate-300" />
                   <p className="text-slate-500">No listings match your filters.</p>
                   <p className="text-sm text-slate-400 mt-1">Try adjusting your filters or searching a different hospital.</p>
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
         ) : (

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { MapPin, Users, DollarSign, Building2 } from "lucide-react";
 import { LAUNCH_METROS } from "@/lib/constants";
-import { SAMPLE_HOSPITALS, SAMPLE_METROS } from "@/lib/sample-data";
+import { getHospitalsByMetro, getMetroBySlug } from "@/lib/queries";
 import { HospitalCard } from "@/components/hospital/HospitalCard";
 import { formatNumber, formatPrice } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -23,14 +23,16 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
   };
 }
 
-export default function CityPage({ params }: CityPageProps) {
+export default async function CityPage({ params }: CityPageProps) {
   const metro = LAUNCH_METROS.find((m) => m.slug === params.slug);
   if (!metro) {
     notFound();
   }
 
-  const hospitals = SAMPLE_HOSPITALS.filter((h) => h.metroId === metro.metroId);
-  const metroData = SAMPLE_METROS.find((m) => m.id === metro.metroId);
+  const [hospitals, metroData] = await Promise.all([
+    getHospitalsByMetro(metro.slug),
+    getMetroBySlug(metro.slug),
+  ]);
 
   return (
     <div>
@@ -50,7 +52,7 @@ export default function CityPage({ params }: CityPageProps) {
 
           {/* Metro stats */}
           <div className="mt-8 flex flex-wrap gap-6">
-            <Stat icon={Building2} label="Hospitals" value={`${metro.hospitalCount}+`} />
+            <Stat icon={Building2} label="Hospitals" value={`${hospitals.length || metro.hospitalCount}+`} />
             <Stat icon={Users} label="Metro Population" value={metroData?.metroPop ? formatNumber(metroData.metroPop) : "--"} />
             <Stat icon={DollarSign} label="Avg 1BR Rent" value={metroData?.avgRent1br ? formatPrice(metroData.avgRent1br) : "--"} />
           </div>

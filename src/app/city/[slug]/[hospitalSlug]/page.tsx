@@ -4,12 +4,10 @@ import {
   Building2, MapPin, Bed, Star, Phone, Globe, AlertCircle,
   GraduationCap, ArrowLeft, ExternalLink
 } from "lucide-react";
-import { SAMPLE_HOSPITALS, SAMPLE_LISTINGS } from "@/lib/sample-data";
+import { getHospitalBySlug, getScoresForHospital, getAllHospitalSlugs } from "@/lib/queries";
 import { LAUNCH_METROS } from "@/lib/constants";
 import { ListingCard } from "@/components/listing/ListingCard";
-import { calculateFullProximityScore } from "@/lib/scoring";
 import { formatNumber } from "@/lib/utils";
-import type { HospitalListingScore } from "@/types";
 import type { Metadata } from "next";
 
 interface HospitalPageProps {
@@ -17,17 +15,15 @@ interface HospitalPageProps {
 }
 
 export async function generateStaticParams() {
-  return SAMPLE_HOSPITALS.map((hospital) => {
-    const metro = LAUNCH_METROS.find((m) => m.metroId === hospital.metroId);
-    return {
-      slug: metro?.slug ?? "",
-      hospitalSlug: hospital.slug,
-    };
-  }).filter((p) => p.slug);
+  const slugs = await getAllHospitalSlugs();
+  return slugs.map((s) => ({
+    slug: s.metroSlug,
+    hospitalSlug: s.slug,
+  }));
 }
 
 export async function generateMetadata({ params }: HospitalPageProps): Promise<Metadata> {
-  const hospital = SAMPLE_HOSPITALS.find((h) => h.slug === params.hospitalSlug);
+  const hospital = await getHospitalBySlug(params.hospitalSlug);
   const metro = LAUNCH_METROS.find((m) => m.slug === params.slug);
   if (!hospital || !metro) return {};
   return {
@@ -36,42 +32,17 @@ export async function generateMetadata({ params }: HospitalPageProps): Promise<M
   };
 }
 
-export default function HospitalPage({ params }: HospitalPageProps) {
+export default async function HospitalPage({ params }: HospitalPageProps) {
   const { slug, hospitalSlug } = params;
 
   const metro = LAUNCH_METROS.find((m) => m.slug === slug);
-  const hospital = SAMPLE_HOSPITALS.find((h) => h.slug === hospitalSlug);
+  const hospital = await getHospitalBySlug(hospitalSlug);
 
   if (!hospital || !metro) {
     notFound();
   }
 
-  const scoredListings = SAMPLE_LISTINGS
-    .filter((l) => l.metroId === hospital.metroId)
-    .map((listing) => {
-      const scoreData = calculateFullProximityScore(
-        hospital.location.lat,
-        hospital.location.lng,
-        listing.location.lat,
-        listing.location.lng,
-        metro.circuityFactor
-      );
-
-      const score: HospitalListingScore = {
-        id: `${hospital.id}-${listing.id}`,
-        hospitalId: hospital.id,
-        listingId: listing.id,
-        straightLineMiles: scoreData.straightLineMiles,
-        estimatedDriveMiles: scoreData.estimatedDriveMiles,
-        driveTimeDayMin: scoreData.driveTimeDayMin,
-        driveTimeNightMin: scoreData.driveTimeNightMin,
-        proximityScore: scoreData.proximityScore,
-        calculationMethod: "haversine",
-      };
-
-      return { listing, score };
-    })
-    .sort((a, b) => b.score.proximityScore - a.score.proximityScore);
+  const scoredListings = await getScoresForHospital(hospital.id);
 
   const jsonLd = {
     "@context": "https://schema.org",

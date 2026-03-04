@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Building2, MapPin } from "lucide-react";
-import { SAMPLE_HOSPITALS, SAMPLE_LISTINGS } from "@/lib/sample-data";
 import { LAUNCH_METROS, HOSPITAL_PIN_COLOR, LISTING_PIN_COLOR, MAP_DEFAULT_ZOOM } from "@/lib/constants";
 import { HospitalCard } from "@/components/hospital/HospitalCard";
 import dynamic from "next/dynamic";
+import type { Hospital, Listing } from "@/types";
 
 const MapView = dynamic(() => import("@/components/map/MapView"), { ssr: false });
 
@@ -13,16 +13,17 @@ const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 export default function MapPage() {
   const [selectedMetro, setSelectedMetro] = useState<string>(LAUNCH_METROS[0].slug);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const [listings, setListings] = useState<Listing[]>([]);
 
   const metro = LAUNCH_METROS.find((m) => m.slug === selectedMetro);
-  const hospitals = useMemo(
-    () => SAMPLE_HOSPITALS.filter((h) => h.metroId === metro?.metroId),
-    [metro?.metroId]
-  );
-  const listings = useMemo(
-    () => SAMPLE_LISTINGS.filter((l) => l.metroId === metro?.metroId),
-    [metro?.metroId]
-  );
+
+  useEffect(() => {
+    fetch(`/api/v1/hospitals?metro=${selectedMetro}&limit=100`)
+      .then((r) => r.json())
+      .then((data) => setHospitals(data.data ?? []))
+      .catch(() => setHospitals([]));
+  }, [selectedMetro]);
 
   return (
     <div className="min-h-screen bg-slate-50">

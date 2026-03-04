@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
 import { LAUNCH_METROS } from "@/lib/constants";
-import { SAMPLE_HOSPITALS, SAMPLE_LISTINGS } from "@/lib/sample-data";
+import { getAllHospitalSlugs, getAllListingIds } from "@/lib/queries";
 
 const BASE_URL = "https://housingnearhospitals.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, changeFrequency: "weekly", priority: 1.0 },
     { url: `${BASE_URL}/search`, changeFrequency: "weekly", priority: 0.9 },
@@ -22,17 +22,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }));
 
-  const hospitalPages: MetadataRoute.Sitemap = SAMPLE_HOSPITALS.map((hospital) => {
-    const metro = LAUNCH_METROS.find((m) => m.metroId === hospital.metroId);
-    return {
-      url: `${BASE_URL}/city/${metro?.slug ?? "nashville-tn"}/${hospital.slug}`,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    };
-  });
+  const hospitalSlugs = await getAllHospitalSlugs();
+  const hospitalPages: MetadataRoute.Sitemap = hospitalSlugs.map((s) => ({
+    url: `${BASE_URL}/city/${s.metroSlug}/${s.slug}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
 
-  const listingPages: MetadataRoute.Sitemap = SAMPLE_LISTINGS.map((listing) => ({
-    url: `${BASE_URL}/listing/${listing.id}`,
+  const listingIds = await getAllListingIds();
+  const listingPages: MetadataRoute.Sitemap = listingIds.map((id) => ({
+    url: `${BASE_URL}/listing/${id}`,
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));

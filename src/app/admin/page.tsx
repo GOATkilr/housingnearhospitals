@@ -1,38 +1,54 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Building2, Home, BarChart3, Database, Settings, RefreshCw, MapPin, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { SAMPLE_HOSPITALS, SAMPLE_LISTINGS, SAMPLE_METROS } from "@/lib/sample-data";
+
+interface AdminCounts {
+  metros: { active: number; total: number };
+  hospitals: { active: number; total: number };
+  listings: { active: number; total: number };
+  scorePairs: number;
+}
 
 export default function AdminDashboard() {
+  const [counts, setCounts] = useState<AdminCounts | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/counts")
+      .then((r) => r.json())
+      .then((data) => setCounts(data))
+      .catch(() => {});
+  }, []);
+
   const stats = [
     {
       label: "Metros Active",
-      value: SAMPLE_METROS.filter((m) => m.isActive).length,
-      total: SAMPLE_METROS.length,
+      value: counts?.metros.active ?? "--",
+      total: counts?.metros.total ?? null,
       icon: MapPin,
       color: "text-blue-600",
       bg: "bg-blue-50",
     },
     {
       label: "Hospitals Indexed",
-      value: SAMPLE_HOSPITALS.filter((h) => h.isActive).length,
-      total: SAMPLE_HOSPITALS.length,
+      value: counts?.hospitals.active ?? "--",
+      total: counts?.hospitals.total ?? null,
       icon: Building2,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
     },
     {
       label: "Active Listings",
-      value: SAMPLE_LISTINGS.filter((l) => l.status === "active").length,
-      total: SAMPLE_LISTINGS.length,
+      value: counts?.listings.active ?? "--",
+      total: counts?.listings.total ?? null,
       icon: Home,
       color: "text-amber-600",
       bg: "bg-amber-50",
     },
     {
       label: "Score Pairs",
-      value: SAMPLE_HOSPITALS.length * SAMPLE_LISTINGS.length,
+      value: counts?.scorePairs ?? "--",
       total: null,
       icon: TrendingUp,
       color: "text-purple-600",
@@ -93,14 +109,14 @@ export default function AdminDashboard() {
             description="View, edit, and import hospital data. Manage hospital records across all metros."
             icon={Building2}
             href="/admin/hospitals"
-            stats={`${SAMPLE_HOSPITALS.length} hospitals`}
+            stats={`${counts?.hospitals.total ?? "--"} hospitals`}
           />
           <AdminCard
             title="Listing Management"
             description="Manage housing listings. Import from external sources or add manually."
             icon={Home}
             href="/admin/listings"
-            stats={`${SAMPLE_LISTINGS.length} listings`}
+            stats={`${counts?.listings.total ?? "--"} listings`}
           />
           <AdminCard
             title="Score Configuration"
@@ -114,7 +130,7 @@ export default function AdminDashboard() {
             description="Configure launch metros, bounding boxes, and metro-specific settings."
             icon={MapPin}
             href="/admin/metros"
-            stats={`${SAMPLE_METROS.length} metros`}
+            stats={`${counts?.metros.total ?? "--"} metros`}
           />
           <AdminCard
             title="Data Pipeline"

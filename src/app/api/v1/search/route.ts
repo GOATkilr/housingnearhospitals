@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SAMPLE_HOSPITALS, SAMPLE_LISTINGS } from "@/lib/sample-data";
-import { getMetroById } from "@/lib/constants";
-import { calculateFullProximityScore, calculateCombinedScore } from "@/lib/scoring";
+import { getHospitalById, searchListings } from "@/lib/queries";
 
 /**
  * GET /api/v1/search
@@ -16,7 +14,7 @@ import { calculateFullProximityScore, calculateCombinedScore } from "@/lib/scori
  *   min_score: number    — Min proximity score (0-100)
  *   sort: string         — "score" | "price_asc" | "price_desc" | "distance"
  *   limit: number        — Max results (default 20)
- *   offset: number       — Pagination offset
+ *   page: number         — Pagination page (default 1)
  *
  * Returns: SearchResult[]
  */
@@ -31,7 +29,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const hospital = SAMPLE_HOSPITALS.find((h) => h.id === hospitalId);
+  const hospital = await getHospitalById(hospitalId);
   if (!hospital) {
     return NextResponse.json(
       { error: "Hospital not found" },
@@ -39,86 +37,33 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const metro = getMetroById(hospital.metroId);
-  const circuityFactor = metro?.circuityFactor ?? 1.3;
-
-  // Parse filters
   const maxPrice = searchParams.get("max_price") ? Number(searchParams.get("max_price")) : undefined;
   const minBedrooms = searchParams.get("min_bedrooms") ? Number(searchParams.get("min_bedrooms")) : undefined;
-  const furnished = searchParams.get("furnished") === "true";
-  const pets = searchParams.get("pets") === "true";
-  const parking = searchParams.get("parking") === "true";
-  const minScore = searchParams.get("min_score") ? Number(searchParams.get("min_score")) : 0;
-  const sort = searchParams.get("sort") ?? "score";
+  const isFurnished = searchParams.get("furnished") === "true" || undefined;
+  const allowsPets = searchParams.get("pets") === "true" || undefined;
+  const hasParking = searchParams.get("parking") === "true" || undefined;
+  const minScore = searchParams.get("min_score") ? Number(searchParams.get("min_score")) : undefined;
+  const sortBy = (searchParams.get("sort") ?? "score") as "score" | "price_asc" | "price_desc" | "distance";
   const limit = Math.min(Number(searchParams.get("limit") ?? "20"), 50);
-  const offset = Number(searchParams.get("offset") ?? "0");
+  const page = Number(searchParams.get("page") ?? "1");
 
-  // Calculate scores for all listings in the same metro
-  let results = SAMPLE_LISTINGS
-    .filter((l) => l.metroId === hospital.metroId && l.status === "active")
-    .map((listing) => {
-      const scoreData = calculateFullProximityScore(
-        hospital.location.lat,
-        hospital.location.lng,
-        listing.location.lat,
-        listing.location.lng,
-        circuityFactor
-      );
-
-      const combinedScore = listing.listingQualityScore
-        ? calculateCombinedScore(scoreData.proximityScore, listing.listingQualityScore)
-        : scoreData.proximityScore;
-
-      return {
-        listing,
-        hospital: {
-          id: hospital.id,
-          name: hospital.name,
-          slug: hospital.slug,
-        },
-        score: {
-          straightLineMiles: scoreData.straightLineMiles,
-          estimatedDriveMiles: scoreData.estimatedDriveMiles,
-          driveTimeDayMin: scoreData.driveTimeDayMin,
-          driveTimeNightMin: scoreData.driveTimeNightMin,
-          proximityScore: scoreData.proximityScore,
-          combinedScore,
-        },
-        metro: metro ? { slug: metro.slug, name: metro.name } : null,
-      };
-    });
-
-  // Apply filters
-  if (maxPrice) results = results.filter((r) => r.listing.priceMonthly <= maxPrice);
-  if (minBedrooms !== undefined) results = results.filter((r) => (r.listing.bedrooms ?? 0) >= minBedrooms);
-  if (furnished) results = results.filter((r) => r.listing.isFurnished);
-  if (pets) results = results.filter((r) => r.listing.allowsPets);
-  if (parking) results = results.filter((r) => r.listing.hasParking);
-  if (minScore) results = results.filter((r) => r.score.proximityScore >= minScore);
-
-  // Sort
-  switch (sort) {
-    case "price_asc":
-      results.sort((a, b) => a.listing.priceMonthly - b.listing.priceMonthly);
-      break;
-    case "price_desc":
-      results.sort((a, b) => b.listing.priceMonthly - a.listing.priceMonthly);
-      break;
-    case "distance":
-      results.sort((a, b) => a.score.straightLineMiles - b.score.straightLineMiles);
-      break;
-    default:
-      results.sort((a, b) => b.score.combinedScore - a.score.combinedScore);
-  }
-
-  const total = results.length;
-  results = results.slice(offset, offset + limit);
+  const { results, total } = await searchListings(hospitalId, {
+    maxPrice,
+    minBedrooms,
+    isFurnished,
+    allowsPets,
+    hasParking,
+    minScore,
+    sortBy,
+    limit,
+    page,
+  });
 
   return NextResponse.json({
     data: results,
     total,
     limit,
-    offset,
+    page,
     hospital: {
       id: hospital.id,
       name: hospital.name,

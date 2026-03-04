@@ -1,14 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Building2, MapPin, Star, ArrowRight, Shield, Clock, TrendingUp } from "lucide-react";
-import { SITE_TAGLINE, LAUNCH_METROS, getMetroById } from "@/lib/constants";
-import { SAMPLE_HOSPITALS } from "@/lib/sample-data";
+import { SITE_TAGLINE, LAUNCH_METROS } from "@/lib/constants";
 import { HospitalSearch } from "@/components/search/HospitalSearch";
 import Link from "next/link";
+import type { Hospital } from "@/types";
 
 export default function HomePage() {
   const router = useRouter();
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/hospitals?limit=100")
+      .then((r) => r.json())
+      .then((data) => setHospitals(data.data ?? []))
+      .catch(() => {});
+  }, []);
 
   return (
     <div>
@@ -28,11 +37,12 @@ export default function HomePage() {
             {/* Search */}
             <div className="mt-10 max-w-2xl mx-auto">
               <HospitalSearch
-                hospitals={SAMPLE_HOSPITALS}
+                hospitals={hospitals}
                 onSelect={(hospital) => {
-                  const metro = getMetroById(hospital.metroId);
-                  if (metro) {
-                    router.push(`/city/${metro.slug}/${hospital.slug}`);
+                  // metroSlug is added by the API response
+                  const metroSlug = (hospital as unknown as { metroSlug?: string }).metroSlug;
+                  if (metroSlug) {
+                    router.push(`/city/${metroSlug}/${hospital.slug}`);
                   }
                 }}
                 placeholder="Search by hospital name (e.g., Vanderbilt, Houston Methodist...)"
@@ -43,7 +53,7 @@ export default function HomePage() {
             <div className="mt-10 flex flex-wrap items-center justify-center gap-8 text-sm text-blue-200">
               <div className="flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-emerald-400" />
-                <span><strong className="text-white">{SAMPLE_HOSPITALS.length}+</strong> hospitals indexed</span>
+                <span><strong className="text-white">{hospitals.length || "50"}+</strong> hospitals indexed</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-emerald-400" />

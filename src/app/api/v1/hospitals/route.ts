@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SAMPLE_HOSPITALS } from "@/lib/sample-data";
-import { getMetroBySlug } from "@/lib/constants";
+import { sql } from "@/lib/db";
 
 /**
  * GET /api/v1/hospitals
@@ -11,43 +10,66 @@ import { getMetroBySlug } from "@/lib/constants";
  *   type: string   — Filter by hospital type
  *   limit: number  — Max results (default 50)
  *
- * Returns: Hospital[]
+ * Returns: Hospital[] (with metroSlug added)
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const metro = searchParams.get("metro");
-  const query = searchParams.get("q")?.toLowerCase();
+  const query = searchParams.get("q");
   const type = searchParams.get("type");
   const limit = Math.min(parseInt(searchParams.get("limit") ?? "50"), 100);
 
-  let results = SAMPLE_HOSPITALS;
+  const rows = await sql`
+    SELECT
+      h.*,
+      ST_Y(h.location::geometry) AS lat,
+      ST_X(h.location::geometry) AS lng,
+      m.slug AS metro_slug,
+      m.name AS metro_name
+    FROM hospitals h
+    JOIN metros m ON m.id = h.metro_id
+    WHERE h.is_active = true
+      AND (${metro ?? null}::text IS NULL OR m.slug = ${metro ?? null})
+      AND (${query ?? null}::text IS NULL OR (
+        h.name ILIKE '%' || ${query ?? ''} || '%'
+        OR h.system_name ILIKE '%' || ${query ?? ''} || '%'
+        OR h.city ILIKE '%' || ${query ?? ''} || '%'
+      ))
+      AND (${type ?? null}::text IS NULL OR h.hospital_type = ${type ?? null})
+    ORDER BY h.name
+    LIMIT ${limit}
+  `;
 
-  // Filter by metro
-  if (metro) {
-    const metroData = getMetroBySlug(metro);
-    if (metroData) {
-      results = results.filter((h) => h.metroId === metroData.metroId);
-    }
-  }
-
-  // Search by name
-  if (query) {
-    results = results.filter(
-      (h) =>
-        h.name.toLowerCase().includes(query) ||
-        h.systemName?.toLowerCase().includes(query) ||
-        h.city?.toLowerCase().includes(query)
-    );
-  }
-
-  // Filter by type
-  if (type) {
-    results = results.filter((h) => h.hospitalType === type);
-  }
+  const data = rows.map((r) => ({
+    id: r.id,
+    metroId: r.metro_id,
+    metroSlug: r.metro_slug,
+    metroName: r.metro_name,
+    cmsCcn: r.cms_ccn,
+    hifldId: r.hifld_id,
+    name: r.name,
+    slug: r.slug,
+    address: r.address,
+    city: r.city,
+    stateCode: r.state_code,
+    zipCode: r.zip_code,
+    phone: r.phone,
+    website: r.website,
+    location: { lat: r.lat, lng: r.lng },
+    hospitalType: r.hospital_type,
+    ownership: r.ownership,
+    systemName: r.system_name,
+    bedCount: r.bed_count,
+    hasEmergency: r.has_emergency,
+    traumaLevel: r.trauma_level,
+    teachingStatus: r.teaching_status,
+    cmsOverallRating: r.cms_overall_rating,
+    isActive: r.is_active,
+  }));
 
   return NextResponse.json({
-    data: results.slice(0, limit),
-    total: results.length,
+    data,
+    total: data.length,
     limit,
   });
 }

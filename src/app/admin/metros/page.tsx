@@ -1,11 +1,30 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { MapPin, ArrowLeft } from "lucide-react";
-import { SAMPLE_METROS, SAMPLE_HOSPITALS, SAMPLE_LISTINGS } from "@/lib/sample-data";
 import { formatNumber, formatPrice } from "@/lib/utils";
+import type { Metro, Hospital, Listing } from "@/types";
 
 export default function AdminMetrosPage() {
+  const [metros, setMetros] = useState<Metro[]>([]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const [listings, setListings] = useState<Listing[]>([]);
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/v1/metros").then((r) => r.json()),
+      fetch("/api/v1/hospitals?limit=100").then((r) => r.json()),
+      fetch("/api/v1/listings").then((r) => r.json()),
+    ])
+      .then(([metroData, hospData, listData]) => {
+        setMetros(metroData.data ?? []);
+        setHospitals(hospData.data ?? []);
+        setListings(listData.data ?? []);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="bg-white border-b border-slate-200">
@@ -21,9 +40,9 @@ export default function AdminMetrosPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid gap-6">
-          {SAMPLE_METROS.map((metro) => {
-            const hospitalCount = SAMPLE_HOSPITALS.filter((h) => h.metroId === metro.id).length;
-            const listingCount = SAMPLE_LISTINGS.filter((l) => l.metroId === metro.id).length;
+          {metros.map((metro) => {
+            const hospitalCount = hospitals.filter((h) => h.metroId === metro.id).length;
+            const listingCount = listings.filter((l) => l.metroId === metro.id).length;
             return (
               <div key={metro.id} className="bg-white rounded-xl border border-slate-200 p-6">
                 <div className="flex items-start justify-between">

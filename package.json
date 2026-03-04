@@ -11,8 +11,10 @@
     "db:score": "tsx scripts/calculate-scores.ts"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
     "clsx": "^2.1.0",
     "csv-parse": "^5.5.0",
+    "dotenv": "^17.3.1",
     "lucide-react": "^0.370.0",
     "mapbox-gl": "^3.19.0",
     "next": "^14.2.0",
