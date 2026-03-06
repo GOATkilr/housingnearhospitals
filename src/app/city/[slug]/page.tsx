@@ -19,9 +19,17 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
   const metro = await getMetroBySlug(params.slug);
   if (!metro) return {};
+  const hospitals = await getHospitalsByMetro(metro.slug);
+  const avgRent = metro.avgRent1br ? formatPrice(metro.avgRent1br) : null;
+  const parts = [
+    `Find apartments near ${hospitals.length} hospitals in ${metro.name}.`,
+    avgRent ? `Avg 1BR rent: ${avgRent}.` : null,
+    "Proximity-scored listings for healthcare workers.",
+  ].filter(Boolean).join(" ");
   return {
     title: `Housing Near ${metro.name} Hospitals`,
-    description: `Find apartments and housing near hospitals in ${metro.name}. Proximity-scored listings for healthcare workers.`,
+    description: parts,
+    alternates: { canonical: `/city/${metro.slug}` },
   };
 }
 
@@ -33,8 +41,25 @@ export default async function CityPage({ params }: CityPageProps) {
 
   const hospitals = await getHospitalsByMetro(metro.slug);
 
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `Hospitals in ${metro.name}`,
+    numberOfItems: hospitals.length,
+    itemListElement: hospitals.map((h, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: h.name,
+      url: `https://housingnearhospitals.com/city/${metro.slug}/${h.slug}`,
+    })),
+  };
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       {/* Hero */}
       <section className="bg-gradient-to-b from-brand-900 to-brand-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,6 +77,13 @@ export default async function CityPage({ params }: CityPageProps) {
             <Stat icon={Users} label="Metro Population" value={metro.metroPop ? formatNumber(metro.metroPop) : "--"} />
             <Stat icon={DollarSign} label="Avg 1BR Rent" value={metro.avgRent1br ? formatPrice(metro.avgRent1br) : "--"} />
           </div>
+
+          <p className="mt-6 text-blue-200 text-sm leading-relaxed max-w-2xl">
+            Browse {hospitals.length} hospitals in the {metro.name} metro
+            {metro.metroPop ? ` (pop. ${formatNumber(metro.metroPop)})` : ""}
+            {metro.avgRent1br ? ` where the average 1-bedroom rents for ${formatPrice(metro.avgRent1br)}/mo` : ""}.
+            Every listing is scored by commute time so you can find housing close to your workplace.
+          </p>
         </div>
       </section>
 

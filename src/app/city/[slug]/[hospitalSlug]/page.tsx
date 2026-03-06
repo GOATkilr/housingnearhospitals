@@ -28,9 +28,23 @@ export async function generateMetadata({ params }: HospitalPageProps): Promise<M
   const hospital = await getHospitalBySlug(params.hospitalSlug);
   const metro = await getMetroBySlug(params.slug);
   if (!hospital || !metro) return {};
+  const scoredListings = await getScoresForHospital(hospital.id);
+  const prices = scoredListings.map(({ listing }) => listing.priceMonthly).filter(Boolean);
+  const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+  const parts = [
+    `Find apartments near ${hospital.name}`,
+    hospital.bedCount ? ` (${formatNumber(hospital.bedCount)} beds` : "",
+    hospital.bedCount && hospital.traumaLevel ? `, ${hospital.traumaLevel}` : hospital.traumaLevel ? ` (${hospital.traumaLevel}` : "",
+    hospital.bedCount || hospital.traumaLevel ? ")" : "",
+    ".",
+    scoredListings.length > 0
+      ? ` ${scoredListings.length} proximity-scored listings${minPrice ? ` from ${formatPrice(minPrice)}/mo` : ""}.`
+      : "",
+  ].join("");
   return {
     title: `Housing Near ${hospital.name} | ${metro.name}`,
-    description: `Find apartments and housing near ${hospital.name} in ${metro.name}. Proximity-scored listings for healthcare workers, travel nurses, and residents.`,
+    description: parts,
+    alternates: { canonical: `/city/${metro.slug}/${hospital.slug}` },
   };
 }
 
@@ -56,6 +70,16 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
   const walkingDistance = distances.filter((d) => d <= 1).length;
   const drivingClose = distances.filter((d) => d > 1 && d <= 5).length;
   const drivingFar = distances.filter((d) => d > 5).length;
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://housingnearhospitals.com" },
+      { "@type": "ListItem", position: 2, name: metro.name, item: `https://housingnearhospitals.com/city/${slug}` },
+      { "@type": "ListItem", position: 3, name: hospital.name, item: `https://housingnearhospitals.com/city/${slug}/${hospitalSlug}` },
+    ],
+  };
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -85,6 +109,10 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
   return (
     <div>
       <TrackHospitalView hospitalId={hospital.id} hospitalName={hospital.name} metroSlug={slug} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

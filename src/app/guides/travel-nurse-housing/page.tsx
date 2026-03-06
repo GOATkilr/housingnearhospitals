@@ -11,8 +11,50 @@ export const metadata: Metadata = {
 
 export default async function TravelNurseGuidePage() {
   const metros = await getMetrosForNav();
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How much should I budget for housing as a travel nurse?",
+        acceptedAnswer: { "@type": "Answer", text: "Most travel nurses spend $1,200-$2,500/month on housing depending on the city. In Nashville, expect $1,500-$2,200 for a furnished 1BR. Houston is slightly cheaper at $1,200-$1,800, and Phoenix ranges from $1,300-$2,000. Always try to stay under your stipend amount to maximize tax-free savings." },
+      },
+      {
+        "@type": "Question",
+        name: "Should I take company housing or the stipend?",
+        acceptedAnswer: { "@type": "Answer", text: "Most experienced travel nurses take the stipend. You have more control over location, quality, and cost. Company housing is convenient for first-time travelers who want a hands-off experience, but it typically reduces your overall pay package by $200-500/week." },
+      },
+      {
+        "@type": "Question",
+        name: "What if my assignment gets cancelled or shortened?",
+        acceptedAnswer: { "@type": "Answer", text: "This is why short-term leases matter. Month-to-month agreements protect you from paying rent on an empty apartment. If you signed a 3-month lease, check the cancellation clause. Some landlords on Furnished Finder offer nurse-friendly cancellation policies." },
+      },
+      {
+        "@type": "Question",
+        name: "Can I share housing with another travel nurse?",
+        acceptedAnswer: { "@type": "Answer", text: "Yes, and many do. Splitting a 2BR apartment cuts costs significantly. Facebook travel nurse groups and agency message boards are good places to find roommates. Just make sure both names are on the lease for protection." },
+      },
+      {
+        "@type": "Question",
+        name: "How far from the hospital is too far?",
+        acceptedAnswer: { "@type": "Answer", text: "We recommend staying within 20 minutes of your hospital. Our scoring system gives the highest scores to listings under 10 minutes away. After 12-hour shifts — especially night shifts — a short commute isn't just convenient, it's a safety issue." },
+      },
+      {
+        "@type": "Question",
+        name: "What's the difference between Furnished Finder and Apartments.com?",
+        acceptedAnswer: { "@type": "Answer", text: "Furnished Finder specializes in furnished, short-term rentals specifically for travel healthcare workers. Apartments.com covers the broader rental market including unfurnished, long-term apartments. Use Furnished Finder for ready-to-move-in options, and Apartments.com when you want more choices or plan to furnish your own place." },
+      },
+    ],
+  };
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <section className="bg-gradient-to-b from-brand-900 to-brand-800 text-white py-16">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h1 className="text-3xl sm:text-4xl font-bold">Travel Nurse Housing Guide</h1>

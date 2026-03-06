@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({
@@ -29,6 +32,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col font-sans">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "WebSite",
+                  name: "Housing Near Hospitals",
+                  url: "https://housingnearhospitals.com",
+                  description: SITE_DESCRIPTION,
+                },
+                {
+                  "@type": "Organization",
+                  name: "Housing Near Hospitals",
+                  url: "https://housingnearhospitals.com",
+                  logo: "https://housingnearhospitals.com/icon.png",
+                },
+              ],
+            }),
+          }}
+        />
         {GA_ID && (
           <>
             <Script

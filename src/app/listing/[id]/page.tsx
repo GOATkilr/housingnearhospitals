@@ -26,9 +26,19 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: ListingPageProps): Promise<Metadata> {
   const listing = await getListingById(params.id);
   if (!listing) return {};
+  const bedLabel = listing.bedrooms === 0 ? "Studio" : `${listing.bedrooms} bed`;
+  const details = [
+    bedLabel,
+    listing.bathrooms ? `${listing.bathrooms} bath` : null,
+    listing.sqft ? `${listing.sqft} sqft` : null,
+  ].filter(Boolean).join(" / ");
+  const fallback = `${listing.title} — ${formatPrice(listing.priceMonthly)}/mo ${details} in ${listing.city}, ${listing.stateCode}. Proximity-scored for healthcare workers.`;
   return {
     title: `${listing.title} | Housing Near Hospitals`,
-    description: listing.description ?? `${listing.title} - ${formatPrice(listing.priceMonthly)}/mo in ${listing.city}, ${listing.stateCode}`,
+    description: listing.description ?? fallback,
+    openGraph: {
+      images: listing.primaryImageUrl ? [{ url: listing.primaryImageUrl }] : [],
+    },
   };
 }
 
