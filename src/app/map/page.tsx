@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Building2, MapPin } from "lucide-react";
-import { LAUNCH_METROS, HOSPITAL_PIN_COLOR, LISTING_PIN_COLOR, MAP_DEFAULT_ZOOM } from "@/lib/constants";
+import { HOSPITAL_PIN_COLOR, LISTING_PIN_COLOR, MAP_DEFAULT_ZOOM } from "@/lib/constants";
 import { HospitalCard } from "@/components/hospital/HospitalCard";
 import dynamic from "next/dynamic";
 import type { Hospital, Listing } from "@/types";
@@ -11,12 +11,33 @@ const MapView = dynamic(() => import("@/components/map/MapView"), { ssr: false }
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
+interface MetroOption {
+  slug: string;
+  name: string;
+  center?: { lat: number; lng: number };
+}
+
 export default function MapPage() {
-  const [selectedMetro, setSelectedMetro] = useState<string>(LAUNCH_METROS[0].slug);
+  const [metros, setMetros] = useState<MetroOption[]>([]);
+  const [selectedMetro, setSelectedMetro] = useState<string>("");
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
 
-  const metro = LAUNCH_METROS.find((m) => m.slug === selectedMetro);
+  // Fetch metros on mount
+  useEffect(() => {
+    fetch("/api/v1/metros")
+      .then((r) => r.json())
+      .then((data) => {
+        const list = (data.data ?? []) as MetroOption[];
+        setMetros(list);
+        if (list.length > 0 && !selectedMetro) {
+          setSelectedMetro(list[0].slug);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const metro = metros.find((m) => m.slug === selectedMetro);
 
   useEffect(() => {
     fetch(`/api/v1/hospitals?metro=${selectedMetro}&limit=100`)
@@ -38,7 +59,7 @@ export default function MapPage() {
 
             {/* Metro selector */}
             <div className="flex gap-2">
-              {LAUNCH_METROS.map((m) => (
+              {metros.map((m) => (
                 <button
                   key={m.slug}
                   onClick={() => setSelectedMetro(m.slug)}
@@ -60,7 +81,7 @@ export default function MapPage() {
         <div className="grid lg:grid-cols-[1fr_350px] gap-6">
           {/* Map */}
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden min-h-[600px]">
-            {MAPBOX_TOKEN && metro ? (
+            {MAPBOX_TOKEN && metro?.center ? (
               <MapView
                 token={MAPBOX_TOKEN}
                 center={metro.center}

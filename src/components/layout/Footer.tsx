@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { Building2 } from "lucide-react";
-import { SITE_NAME, SITE_TAGLINE, LAUNCH_METROS } from "@/lib/constants";
+import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
+import { getMetrosForNav } from "@/lib/queries";
 
-export function Footer() {
+export async function Footer() {
+  const metros = await getMetrosForNav();
   return (
     <footer className="bg-slate-900 text-slate-400">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -22,7 +24,7 @@ export function Footer() {
           <div>
             <h4 className="text-white font-semibold text-sm mb-3">Cities</h4>
             <ul className="space-y-2">
-              {LAUNCH_METROS.map((metro) => (
+              {metros.map((metro) => (
                 <li key={metro.slug}>
                   <Link
                     href={`/city/${metro.slug}`}

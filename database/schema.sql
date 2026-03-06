@@ -486,6 +486,12 @@ CREATE INDEX idx_mv_search_metro ON mv_search_results(metro_id);
 CREATE INDEX idx_mv_search_price ON mv_search_results(price_monthly);
 
 -- ============================================================
+-- MIGRATION: Deduplication constraints for listing imports
+-- ============================================================
+ALTER TABLE listings ADD CONSTRAINT uq_listings_source_external_id UNIQUE (source, external_id);
+CREATE INDEX IF NOT EXISTS idx_listings_updated_source ON listings(updated_at, source) WHERE status = 'active';
+
+-- ============================================================
 -- SEED DATA: Launch metros
 -- ============================================================
 INSERT INTO metros (slug, name, state_code, center, timezone, circuity_factor, is_active, metro_pop, avg_rent_1br, cost_of_living) VALUES

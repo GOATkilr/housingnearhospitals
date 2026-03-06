@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Building2, Home, BarChart3, Database, Settings, RefreshCw, MapPin, TrendingUp } from "lucide-react";
+import { Building2, Home, BarChart3, Database, Settings, RefreshCw, MapPin, TrendingUp, MousePointerClick } from "lucide-react";
 import Link from "next/link";
 
 interface AdminCounts {
@@ -131,6 +131,13 @@ export default function AdminDashboard() {
             icon={MapPin}
             href="/admin/metros"
             stats={`${counts?.metros.total ?? "--"} metros`}
+          />
+          <AdminCard
+            title="Click Analytics"
+            description="Track affiliate clicks, top hospitals, top listings, and visitor engagement metrics."
+            icon={MousePointerClick}
+            href="/admin/analytics"
+            stats="Last 30 days"
           />
           <AdminCard
             title="Data Pipeline"

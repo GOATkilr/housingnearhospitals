@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-import { LAUNCH_METROS } from "@/lib/constants";
-import { getAllHospitalSlugs, getAllListingIds } from "@/lib/queries";
+import { getAllHospitalSlugs, getAllListingIds, getActiveMetroSlugs } from "@/lib/queries";
 
 const BASE_URL = "https://housingnearhospitals.com";
 
@@ -16,8 +15,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/guides/travel-nurse-housing`, changeFrequency: "monthly", priority: 0.7 },
   ];
 
-  const cityPages: MetadataRoute.Sitemap = LAUNCH_METROS.map((metro) => ({
-    url: `${BASE_URL}/city/${metro.slug}`,
+  const metroSlugs = await getActiveMetroSlugs();
+  const cityPages: MetadataRoute.Sitemap = metroSlugs.map((slug) => ({
+    url: `${BASE_URL}/city/${slug}`,
     changeFrequency: "weekly" as const,
     priority: 0.9,
   }));

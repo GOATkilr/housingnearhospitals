@@ -1,38 +1,37 @@
 import { notFound } from "next/navigation";
 import { MapPin, Users, DollarSign, Building2 } from "lucide-react";
-import { LAUNCH_METROS } from "@/lib/constants";
-import { getHospitalsByMetro, getMetroBySlug } from "@/lib/queries";
+import { getHospitalsByMetro, getMetroBySlug, getActiveMetroSlugs } from "@/lib/queries";
 import { HospitalCard } from "@/components/hospital/HospitalCard";
 import { formatNumber, formatPrice } from "@/lib/utils";
 import type { Metadata } from "next";
+
+export const revalidate = 3600; // Revalidate hourly
 
 interface CityPageProps {
   params: { slug: string };
 }
 
 export async function generateStaticParams() {
-  return LAUNCH_METROS.map((metro) => ({ slug: metro.slug }));
+  const slugs = await getActiveMetroSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
-  const metro = LAUNCH_METROS.find((m) => m.slug === params.slug);
+  const metro = await getMetroBySlug(params.slug);
   if (!metro) return {};
   return {
     title: `Housing Near ${metro.name} Hospitals`,
-    description: `Find apartments and housing near hospitals in ${metro.name}. Browse ${metro.hospitalCount}+ hospitals with proximity-scored listings for healthcare workers.`,
+    description: `Find apartments and housing near hospitals in ${metro.name}. Proximity-scored listings for healthcare workers.`,
   };
 }
 
 export default async function CityPage({ params }: CityPageProps) {
-  const metro = LAUNCH_METROS.find((m) => m.slug === params.slug);
+  const metro = await getMetroBySlug(params.slug);
   if (!metro) {
     notFound();
   }
 
-  const [hospitals, metroData] = await Promise.all([
-    getHospitalsByMetro(metro.slug),
-    getMetroBySlug(metro.slug),
-  ]);
+  const hospitals = await getHospitalsByMetro(metro.slug);
 
   return (
     <div>
@@ -46,15 +45,12 @@ export default async function CityPage({ params }: CityPageProps) {
           <h1 className="text-3xl sm:text-4xl font-bold">
             Housing Near {metro.name} Hospitals
           </h1>
-          <p className="mt-3 text-blue-200 text-lg max-w-2xl">
-            {metro.tagline}
-          </p>
 
           {/* Metro stats */}
           <div className="mt-8 flex flex-wrap gap-6">
-            <Stat icon={Building2} label="Hospitals" value={`${hospitals.length || metro.hospitalCount}+`} />
-            <Stat icon={Users} label="Metro Population" value={metroData?.metroPop ? formatNumber(metroData.metroPop) : "--"} />
-            <Stat icon={DollarSign} label="Avg 1BR Rent" value={metroData?.avgRent1br ? formatPrice(metroData.avgRent1br) : "--"} />
+            <Stat icon={Building2} label="Hospitals" value={`${hospitals.length}+`} />
+            <Stat icon={Users} label="Metro Population" value={metro.metroPop ? formatNumber(metro.metroPop) : "--"} />
+            <Stat icon={DollarSign} label="Avg 1BR Rent" value={metro.avgRent1br ? formatPrice(metro.avgRent1br) : "--"} />
           </div>
         </div>
       </section>

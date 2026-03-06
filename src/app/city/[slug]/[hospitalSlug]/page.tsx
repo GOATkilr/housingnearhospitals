@@ -4,11 +4,13 @@ import {
   Building2, MapPin, Bed, Star, Phone, Globe, AlertCircle,
   GraduationCap, ArrowLeft, ExternalLink
 } from "lucide-react";
-import { getHospitalBySlug, getScoresForHospital, getAllHospitalSlugs } from "@/lib/queries";
-import { LAUNCH_METROS } from "@/lib/constants";
-import { ListingCard } from "@/components/listing/ListingCard";
-import { formatNumber } from "@/lib/utils";
+import { getHospitalBySlug, getScoresForHospital, getAllHospitalSlugs, getMetroBySlug } from "@/lib/queries";
+import { HospitalListings } from "@/components/hospital/HospitalListings";
+import { TrackHospitalView } from "@/components/analytics/TrackPageView";
+import { formatNumber, formatPrice } from "@/lib/utils";
 import type { Metadata } from "next";
+
+export const revalidate = 3600; // Revalidate hourly
 
 interface HospitalPageProps {
   params: { slug: string; hospitalSlug: string };
@@ -24,7 +26,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: HospitalPageProps): Promise<Metadata> {
   const hospital = await getHospitalBySlug(params.hospitalSlug);
-  const metro = LAUNCH_METROS.find((m) => m.slug === params.slug);
+  const metro = await getMetroBySlug(params.slug);
   if (!hospital || !metro) return {};
   return {
     title: `Housing Near ${hospital.name} | ${metro.name}`,
@@ -35,14 +37,25 @@ export async function generateMetadata({ params }: HospitalPageProps): Promise<M
 export default async function HospitalPage({ params }: HospitalPageProps) {
   const { slug, hospitalSlug } = params;
 
-  const metro = LAUNCH_METROS.find((m) => m.slug === slug);
-  const hospital = await getHospitalBySlug(hospitalSlug);
+  const [metro, hospital] = await Promise.all([
+    getMetroBySlug(slug),
+    getHospitalBySlug(hospitalSlug),
+  ]);
 
   if (!hospital || !metro) {
     notFound();
   }
 
   const scoredListings = await getScoresForHospital(hospital.id);
+
+  // Compute listing stats
+  const prices = scoredListings.map(({ listing }) => listing.priceMonthly).filter(Boolean);
+  const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+  const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+  const distances = scoredListings.map(({ score }) => score.straightLineMiles);
+  const walkingDistance = distances.filter((d) => d <= 1).length;
+  const drivingClose = distances.filter((d) => d > 1 && d <= 5).length;
+  const drivingFar = distances.filter((d) => d > 5).length;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -71,6 +84,7 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
 
   return (
     <div>
+      <TrackHospitalView hospitalId={hospital.id} hospitalName={hospital.name} metroSlug={slug} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -150,6 +164,49 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
         </div>
       </section>
 
+      {/* Listing Stats Summary */}
+      {scoredListings.length > 0 && (
+        <section className="border-b border-slate-200 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="grid sm:grid-cols-3 gap-4">
+              <div className="bg-slate-50 rounded-lg px-4 py-3">
+                <p className="text-2xl font-bold text-slate-900">{scoredListings.length}</p>
+                <p className="text-sm text-slate-500">apartments within 15 miles</p>
+              </div>
+              <div className="bg-slate-50 rounded-lg px-4 py-3">
+                <p className="text-2xl font-bold text-slate-900">
+                  {formatPrice(minPrice)} - {formatPrice(maxPrice)}
+                </p>
+                <p className="text-sm text-slate-500">monthly price range</p>
+              </div>
+              <div className="bg-slate-50 rounded-lg px-4 py-3">
+                <div className="flex gap-4 text-sm">
+                  {walkingDistance > 0 && (
+                    <div>
+                      <span className="text-lg font-bold text-emerald-600">{walkingDistance}</span>
+                      <span className="text-slate-500 ml-1">walking distance</span>
+                    </div>
+                  )}
+                  {drivingClose > 0 && (
+                    <div>
+                      <span className="text-lg font-bold text-blue-600">{drivingClose}</span>
+                      <span className="text-slate-500 ml-1">within 5 mi</span>
+                    </div>
+                  )}
+                  {drivingFar > 0 && (
+                    <div>
+                      <span className="text-lg font-bold text-slate-600">{drivingFar}</span>
+                      <span className="text-slate-500 ml-1">5-15 mi</span>
+                    </div>
+                  )}
+                </div>
+                <p className="text-sm text-slate-500 mt-1">distance distribution</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Listings */}
       <section className="py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -163,11 +220,7 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
           </div>
 
           {scoredListings.length > 0 ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {scoredListings.map(({ listing, score }) => (
-                <ListingCard key={listing.id} listing={listing} score={score} />
-              ))}
-            </div>
+            <HospitalListings listings={scoredListings} hospitalId={hospital.id} />
           ) : (
             <div className="text-center py-16 bg-slate-50 rounded-xl">
               <Building2 className="w-12 h-12 mx-auto mb-3 text-slate-300" />

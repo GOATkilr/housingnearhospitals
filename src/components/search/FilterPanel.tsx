@@ -5,18 +5,25 @@ import { SlidersHorizontal, X, ChevronDown } from "lucide-react";
 import type { SearchFilters } from "@/types";
 import { SORT_OPTIONS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { trackSearchFilter } from "@/lib/analytics";
 
 interface FilterPanelProps {
   filters: SearchFilters;
   onChange: (filters: SearchFilters) => void;
+  hospitalId?: string;
   className?: string;
 }
 
-export function FilterPanel({ filters, onChange, className }: FilterPanelProps) {
+export function FilterPanel({ filters, onChange, hospitalId, className }: FilterPanelProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const update = (partial: Partial<SearchFilters>) => {
     onChange({ ...filters, ...partial });
+    // Track filter changes
+    if (hospitalId) {
+      const [key, value] = Object.entries(partial)[0];
+      trackSearchFilter({ hospitalId, filterType: key, filterValue: value ?? "" });
+    }
   };
 
   const activeFilterCount = [

@@ -1,12 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Building2, Menu, X, Search, MapPin } from "lucide-react";
-import { SITE_NAME, LAUNCH_METROS } from "@/lib/constants";
+import { SITE_NAME } from "@/lib/constants";
+
+interface MetroLink {
+  slug: string;
+  name: string;
+}
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [metros, setMetros] = useState<MetroLink[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/metros")
+      .then((r) => r.json())
+      .then((data) => {
+        const list = (data.data ?? data ?? []) as MetroLink[];
+        setMetros(list);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
@@ -24,7 +40,7 @@ export function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1">
-            {LAUNCH_METROS.map((metro) => (
+            {metros.map((metro) => (
               <Link
                 key={metro.slug}
                 href={`/city/${metro.slug}`}
@@ -70,7 +86,7 @@ export function Header() {
         {mobileOpen && (
           <div className="md:hidden pb-4 border-t border-slate-100 mt-2 pt-4">
             <div className="flex flex-col gap-1">
-              {LAUNCH_METROS.map((metro) => (
+              {metros.map((metro) => (
                 <Link
                   key={metro.slug}
                   href={`/city/${metro.slug}`}

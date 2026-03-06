@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "db:seed": "tsx scripts/seed-hospitals.ts",
-    "db:score": "tsx scripts/calculate-scores.ts"
+    "db:score": "tsx scripts/calculate-scores.ts",
+    "listings:fetch": "tsx scripts/fetch-rentcast-listings.ts",
+    "listings:import": "tsx scripts/import-listings.ts",
+    "listings:scores": "tsx scripts/calculate-scores.ts",
+    "listings:pipeline": "tsx scripts/refresh-listings-pipeline.ts",
+    "metro:add": "tsx scripts/add-metro.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",

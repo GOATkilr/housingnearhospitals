@@ -1,166 +1,240 @@
 /**
- * Batch Score Calculator
+ * Batch Score Calculator — Production
  *
- * Calculates proximity scores for all hospital-listing pairs within a metro.
- * Designed to be run as a scheduled job or after new listings are imported.
+ * Calculates proximity scores for all hospital-listing pairs from the database.
+ * Uses PostGIS ST_DWithin for spatial filtering and Haversine for scoring.
  *
  * Usage:
  *   npx tsx scripts/calculate-scores.ts
  *   npx tsx scripts/calculate-scores.ts --metro nashville-tn
- *
- * Algorithm:
- *   1. For each metro, fetch all active hospitals and listings
- *   2. For each hospital, find listings within 30-mile radius
- *   3. Calculate proximity scores using Haversine + circuity estimation
- *   4. Upsert scores into hospital_listing_scores table
- *   5. Refresh materialized search view
  */
 
+import { config } from "dotenv";
+config({ path: ".env.local" });
+import { neon } from "@neondatabase/serverless";
 import {
-  haversineDistance,
   calculateFullProximityScore,
   calculateListingQualityScore,
   calculateCombinedScore,
 } from "../src/lib/scoring";
 
-// Demo: Calculate scores for sample data to verify algorithm
-function demo() {
-  console.log("=== Proximity Score Calculator ===\n");
-  console.log("Running in demo mode with sample coordinates.\n");
-
-  // Vanderbilt University Medical Center
-  const hospital = {
-    name: "Vanderbilt University Medical Center",
-    lat: 36.1425,
-    lng: -86.8026,
-  };
-
-  // Sample listings at various distances
-  const listings = [
-    { name: "Midtown Apartment (0.6 mi)", lat: 36.1520, lng: -86.7970 },
-    { name: "Music Row Studio (0.8 mi)", lat: 36.1495, lng: -86.7928 },
-    { name: "Sylvan Park House (2.3 mi)", lat: 36.1380, lng: -86.8360 },
-    { name: "The Gulch Luxury (1.2 mi)", lat: 36.1510, lng: -86.7870 },
-    { name: "West End Room (0.9 mi)", lat: 36.1465, lng: -86.8140 },
-    { name: "Berry Hill Townhouse (3.2 mi)", lat: 36.1200, lng: -86.7650 },
-    { name: "East Nashville (5.1 mi)", lat: 36.1800, lng: -86.7400 },
-    { name: "Brentwood (8.5 mi)", lat: 36.0300, lng: -86.7800 },
-    { name: "Murfreesboro (30 mi)", lat: 35.8456, lng: -86.3903 },
-  ];
-
-  console.log(`Hospital: ${hospital.name}`);
-  console.log(`Location: ${hospital.lat}, ${hospital.lng}\n`);
-  console.log("-".repeat(100));
-  console.log(
-    "Listing".padEnd(35) +
-    "Distance".padEnd(12) +
-    "Drive(Day)".padEnd(12) +
-    "Drive(Night)".padEnd(14) +
-    "Score".padEnd(8) +
-    "Band"
-  );
-  console.log("-".repeat(100));
-
-  for (const listing of listings) {
-    const result = calculateFullProximityScore(
-      hospital.lat,
-      hospital.lng,
-      listing.lat,
-      listing.lng,
-      1.3 // Nashville circuity factor
-    );
-
-    const band =
-      result.proximityScore >= 90 ? "Walking Distance" :
-      result.proximityScore >= 75 ? "Very Close" :
-      result.proximityScore >= 60 ? "Close" :
-      result.proximityScore >= 40 ? "Moderate" :
-      result.proximityScore >= 20 ? "Far" : "Very Far";
-
-    console.log(
-      listing.name.padEnd(35) +
-      `${result.straightLineMiles} mi`.padEnd(12) +
-      `${result.driveTimeDayMin} min`.padEnd(12) +
-      `${result.driveTimeNightMin} min`.padEnd(14) +
-      `${result.proximityScore}`.padEnd(8) +
-      band
-    );
-  }
-
-  console.log("-".repeat(100));
-
-  // Demo listing quality scoring
-  console.log("\n\n=== Listing Quality Score Demo ===\n");
-
-  const sampleListings = [
-    {
-      name: "Fully loaded furnished apt",
-      isFurnished: true,
-      leaseMinMonths: 1,
-      allowsPets: true,
-      hasParking: true,
-      hasInUnitLaundry: true,
-      isVerified: true,
-      avgRating: 4.5,
-    },
-    {
-      name: "Basic unfurnished apt",
-      isFurnished: false,
-      leaseMinMonths: 12,
-      allowsPets: false,
-      hasParking: false,
-      hasInUnitLaundry: false,
-      isVerified: false,
-    },
-    {
-      name: "Furnished, short-term, verified",
-      isFurnished: true,
-      leaseMinMonths: 3,
-      allowsPets: false,
-      hasParking: true,
-      hasInUnitLaundry: false,
-      isVerified: true,
-    },
-  ];
-
-  for (const listing of sampleListings) {
-    const qualityScore = calculateListingQualityScore(listing);
-    console.log(`${listing.name}: ${qualityScore}/100`);
-
-    // Combined with a sample proximity score of 75
-    const combined = calculateCombinedScore(75, qualityScore);
-    console.log(`  Combined (with proximity 75): ${combined}/100\n`);
-  }
-
-  console.log("\n=== SQL for Production ===\n");
-  console.log(`-- Calculate and insert scores for all hospital-listing pairs within 30 miles`);
-  console.log(`INSERT INTO hospital_listing_scores (hospital_id, listing_id, straight_line_miles, estimated_drive_miles, drive_time_day_min, drive_time_night_min, proximity_score, combined_score, calculation_method)`);
-  console.log(`SELECT`);
-  console.log(`  h.id AS hospital_id,`);
-  console.log(`  l.id AS listing_id,`);
-  console.log(`  distance_miles(h.location, l.location) AS straight_line_miles,`);
-  console.log(`  ROUND(distance_miles(h.location, l.location) * m.circuity_factor, 2) AS estimated_drive_miles,`);
-  console.log(`  estimated_drive_time(distance_miles(h.location, l.location), m.circuity_factor) AS drive_time_day_min,`);
-  console.log(`  estimated_drive_time(distance_miles(h.location, l.location), m.circuity_factor, 30) AS drive_time_night_min,`);
-  console.log(`  proximity_score_from_drive_time(estimated_drive_time(distance_miles(h.location, l.location), m.circuity_factor)) AS proximity_score,`);
-  console.log(`  NULL AS combined_score,`);
-  console.log(`  'haversine' AS calculation_method`);
-  console.log(`FROM hospitals h`);
-  console.log(`CROSS JOIN listings l`);
-  console.log(`JOIN metros m ON m.id = h.metro_id`);
-  console.log(`WHERE h.metro_id = l.metro_id`);
-  console.log(`  AND h.is_active = true`);
-  console.log(`  AND l.status = 'active'`);
-  console.log(`  AND ST_DWithin(h.location, l.location, 30 * 1609.344)  -- 30 miles`);
-  console.log(`ON CONFLICT (hospital_id, listing_id) DO UPDATE SET`);
-  console.log(`  straight_line_miles = EXCLUDED.straight_line_miles,`);
-  console.log(`  estimated_drive_miles = EXCLUDED.estimated_drive_miles,`);
-  console.log(`  drive_time_day_min = EXCLUDED.drive_time_day_min,`);
-  console.log(`  drive_time_night_min = EXCLUDED.drive_time_night_min,`);
-  console.log(`  proximity_score = EXCLUDED.proximity_score,`);
-  console.log(`  calculated_at = NOW();`);
-  console.log(`\n-- Then refresh the materialized view`);
-  console.log(`REFRESH MATERIALIZED VIEW CONCURRENTLY mv_search_results;`);
+const DATABASE_URL = process.env.DATABASE_URL;
+if (!DATABASE_URL) {
+  console.error("DATABASE_URL is not set.");
+  process.exit(1);
 }
 
-demo();
+const sql = neon(DATABASE_URL);
+
+const MAX_DISTANCE_MILES = 15;
+
+interface DbHospital {
+  id: string;
+  metro_id: string;
+  lat: number;
+  lng: number;
+  circuity_factor: number;
+}
+
+interface DbListing {
+  id: string;
+  metro_id: string;
+  lat: number;
+  lng: number;
+  is_furnished: boolean;
+  lease_min_months: number | null;
+  allows_pets: boolean;
+  has_parking: boolean;
+  has_in_unit_laundry: boolean;
+  is_verified: boolean;
+}
+
+async function calculateForMetro(metroSlug: string): Promise<number> {
+  console.log(`\n--- ${metroSlug.toUpperCase()} ---`);
+
+  // Fetch hospitals with their metro's circuity factor
+  const hospitals: DbHospital[] = (await sql`
+    SELECT h.id, h.metro_id,
+           ST_Y(h.location::geometry) AS lat,
+           ST_X(h.location::geometry) AS lng,
+           m.circuity_factor
+    FROM hospitals h
+    JOIN metros m ON m.id = h.metro_id
+    WHERE m.slug = ${metroSlug} AND h.is_active = true
+  `) as unknown as DbHospital[];
+
+  console.log(`  Hospitals: ${hospitals.length}`);
+
+  // Fetch all active listings for this metro
+  const listings: DbListing[] = (await sql`
+    SELECT l.id, l.metro_id,
+           ST_Y(l.location::geometry) AS lat,
+           ST_X(l.location::geometry) AS lng,
+           l.is_furnished, l.lease_min_months, l.allows_pets,
+           l.has_parking, l.has_in_unit_laundry, l.is_verified
+    FROM listings l
+    JOIN metros m ON m.id = l.metro_id
+    WHERE m.slug = ${metroSlug} AND l.status = 'active' AND l.deleted_at IS NULL
+  `) as unknown as DbListing[];
+
+  console.log(`  Listings: ${listings.length}`);
+
+  if (hospitals.length === 0 || listings.length === 0) {
+    console.log("  Skipping — no data to score.");
+    return 0;
+  }
+
+  const BATCH_SIZE = 75;
+  let scoreCount = 0;
+  let batch: Array<{
+    hospitalId: string;
+    listingId: string;
+    straightLineMiles: number;
+    estimatedDriveMiles: number;
+    driveTimeDayMin: number;
+    driveTimeNightMin: number;
+    scoreDriveDay: number;
+    scoreDriveNight: number;
+    scoreDistance: number;
+    proximityScore: number;
+    combinedScore: number;
+  }> = [];
+
+  async function flushBatch() {
+    if (batch.length === 0) return;
+
+    // Use Promise.all with smaller chunks for parallel upserts
+    // Neon tagged templates don't support dynamic VALUES, so we batch via Promise.all
+    const promises = batch.map((row) =>
+      sql`
+        INSERT INTO hospital_listing_scores (
+          hospital_id, listing_id, straight_line_miles, estimated_drive_miles,
+          drive_time_day_min, drive_time_night_min,
+          score_drive_day, score_drive_night, score_distance,
+          proximity_score, combined_score, calculation_method
+        ) VALUES (
+          ${row.hospitalId}::uuid, ${row.listingId}::uuid,
+          ${row.straightLineMiles}, ${row.estimatedDriveMiles},
+          ${row.driveTimeDayMin}, ${row.driveTimeNightMin},
+          ${row.scoreDriveDay}, ${row.scoreDriveNight}, ${row.scoreDistance},
+          ${row.proximityScore}, ${row.combinedScore}, 'haversine'
+        )
+        ON CONFLICT (hospital_id, listing_id) DO UPDATE SET
+          straight_line_miles = EXCLUDED.straight_line_miles,
+          estimated_drive_miles = EXCLUDED.estimated_drive_miles,
+          drive_time_day_min = EXCLUDED.drive_time_day_min,
+          drive_time_night_min = EXCLUDED.drive_time_night_min,
+          score_drive_day = EXCLUDED.score_drive_day,
+          score_drive_night = EXCLUDED.score_drive_night,
+          score_distance = EXCLUDED.score_distance,
+          proximity_score = EXCLUDED.proximity_score,
+          combined_score = EXCLUDED.combined_score,
+          calculated_at = NOW()
+      `
+    );
+
+    await Promise.all(promises);
+    batch = [];
+  }
+
+  for (const hospital of hospitals) {
+    const circuityFactor = Number(hospital.circuity_factor) || 1.3;
+
+    for (const listing of listings) {
+      // Quick pre-filter: rough lat/lng delta (15 miles ≈ 0.22 degrees lat)
+      const dlat = Math.abs(Number(hospital.lat) - Number(listing.lat));
+      const dlng = Math.abs(Number(hospital.lng) - Number(listing.lng));
+      if (dlat > 0.25 || dlng > 0.3) continue;
+
+      const result = calculateFullProximityScore(
+        Number(hospital.lat),
+        Number(hospital.lng),
+        Number(listing.lat),
+        Number(listing.lng),
+        circuityFactor
+      );
+
+      if (result.straightLineMiles > MAX_DISTANCE_MILES) continue;
+
+      const qualityScore = calculateListingQualityScore({
+        isFurnished: listing.is_furnished,
+        leaseMinMonths: listing.lease_min_months ?? 12,
+        allowsPets: listing.allows_pets,
+        hasParking: listing.has_parking,
+        hasInUnitLaundry: listing.has_in_unit_laundry,
+        isVerified: listing.is_verified,
+      });
+
+      const combinedScore = calculateCombinedScore(result.proximityScore, qualityScore);
+
+      batch.push({
+        hospitalId: hospital.id,
+        listingId: listing.id,
+        straightLineMiles: result.straightLineMiles,
+        estimatedDriveMiles: result.estimatedDriveMiles,
+        driveTimeDayMin: result.driveTimeDayMin,
+        driveTimeNightMin: result.driveTimeNightMin,
+        scoreDriveDay: result.scoreDriveDay,
+        scoreDriveNight: result.scoreDriveNight,
+        scoreDistance: result.scoreDistance,
+        proximityScore: result.proximityScore,
+        combinedScore,
+      });
+
+      scoreCount++;
+
+      if (batch.length >= BATCH_SIZE) {
+        await flushBatch();
+      }
+
+      if (scoreCount % 500 === 0) {
+        console.log(`  Scored ${scoreCount} pairs...`);
+      }
+    }
+  }
+
+  // Flush remaining
+  await flushBatch();
+
+  console.log(`  Total score pairs: ${scoreCount}`);
+  return scoreCount;
+}
+
+async function main() {
+  const args = process.argv.slice(2);
+  const metroArg = args.find((a) => a.startsWith("--metro"))
+    ? args[args.indexOf("--metro") + 1]
+    : null;
+
+  let metros: string[];
+  if (metroArg) {
+    metros = [metroArg];
+  } else {
+    // Fetch all active metros from DB
+    const rows = await sql`SELECT slug FROM metros WHERE is_active = true ORDER BY name`;
+    metros = rows.map((r) => r.slug as string);
+    if (metros.length === 0) {
+      console.log("No active metros found. Add metros first with add-metro.ts.");
+      return;
+    }
+  }
+
+  console.log("=== Proximity Score Calculator ===\n");
+
+  let totalScores = 0;
+  for (const metro of metros) {
+    totalScores += await calculateForMetro(metro);
+  }
+
+  // Refresh materialized view
+  console.log("\nRefreshing materialized view mv_search_results...");
+  await sql`REFRESH MATERIALIZED VIEW CONCURRENTLY mv_search_results`;
+  console.log("  Done.");
+
+  console.log(`\n=== COMPLETE: ${totalScores} score pairs calculated ===`);
+}
+
+main().catch((err) => {
+  console.error("Score calculation failed:", err);
+  process.exit(1);
+});

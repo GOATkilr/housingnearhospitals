@@ -3,19 +3,29 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Building2, MapPin, Star, ArrowRight, Shield, Clock, TrendingUp } from "lucide-react";
-import { SITE_TAGLINE, LAUNCH_METROS } from "@/lib/constants";
+import { SITE_TAGLINE } from "@/lib/constants";
 import { HospitalSearch } from "@/components/search/HospitalSearch";
 import Link from "next/link";
 import type { Hospital } from "@/types";
 
+interface MetroLink {
+  slug: string;
+  name: string;
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const [metros, setMetros] = useState<MetroLink[]>([]);
 
   useEffect(() => {
     fetch("/api/v1/hospitals?limit=100")
       .then((r) => r.json())
       .then((data) => setHospitals(data.data ?? []))
+      .catch(() => {});
+    fetch("/api/v1/metros")
+      .then((r) => r.json())
+      .then((data) => setMetros(data.data ?? []))
       .catch(() => {});
   }, []);
 
@@ -57,7 +67,7 @@ export default function HomePage() {
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-emerald-400" />
-                <span><strong className="text-white">3</strong> launch metros</span>
+                <span><strong className="text-white">{metros.length || 3}</strong> metros</span>
               </div>
               <div className="flex items-center gap-2">
                 <Star className="w-5 h-5 text-emerald-400" />
@@ -112,13 +122,12 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {LAUNCH_METROS.map((metro) => (
+            {metros.map((metro) => (
               <Link
                 key={metro.slug}
                 href={`/city/${metro.slug}`}
                 className="group bg-white rounded-xl border border-slate-200 overflow-hidden card-hover"
               >
-                {/* Placeholder gradient */}
                 <div className="h-40 bg-gradient-to-br from-brand-700 to-brand-900 flex items-center justify-center">
                   <MapPin className="w-12 h-12 text-white/30" />
                 </div>
@@ -126,9 +135,8 @@ export default function HomePage() {
                   <h3 className="text-xl font-bold text-slate-900 group-hover:text-brand-700 transition-colors">
                     {metro.name}
                   </h3>
-                  <p className="text-sm text-slate-500 mt-1">{metro.tagline}</p>
                   <div className="flex items-center gap-1 mt-4 text-sm font-medium text-brand-700">
-                    <span>{metro.hospitalCount}+ hospitals</span>
+                    <span>Browse hospitals</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>

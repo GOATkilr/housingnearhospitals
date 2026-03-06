@@ -6,15 +6,37 @@ import type { Listing, HospitalListingScore } from "@/types";
 import { ScoreRing } from "@/components/score/ScoreRing";
 import { CommuteBar } from "@/components/score/CommuteBar";
 import { formatPrice, cn } from "@/lib/utils";
+import { trackAffiliateClick } from "@/lib/analytics";
 
 interface ListingCardProps {
   listing: Listing;
   score?: HospitalListingScore;
+  hospitalId?: string;
+  source?: string;
   className?: string;
 }
 
-export function ListingCard({ listing, score, className }: ListingCardProps) {
+export function ListingCard({ listing, score, hospitalId, source, className }: ListingCardProps) {
   const displayScore = score?.proximityScore ?? listing.listingQualityScore ?? 0;
+  const resolvedHospitalId = hospitalId ?? score?.hospitalId;
+
+  function handleAffiliateClick() {
+    const url = listing.affiliateUrl ?? listing.sourceUrl;
+    // Fire-and-forget click tracking
+    const payload = JSON.stringify({
+      listingId: listing.id,
+      hospitalId: resolvedHospitalId,
+      eventType: "click",
+      source: source ?? "listing_card",
+      affiliateUrl: url,
+    });
+    if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+      navigator.sendBeacon("/api/v1/clicks", new Blob([payload], { type: "application/json" }));
+    } else {
+      fetch("/api/v1/clicks", { method: "POST", body: payload, keepalive: true });
+    }
+    trackAffiliateClick({ listingId: listing.id, hospitalId: resolvedHospitalId, source: source ?? "listing_card" });
+  }
 
   return (
     <div className={cn("bg-white rounded-xl border border-slate-200 overflow-hidden card-hover", className)}>
@@ -124,6 +146,7 @@ export function ListingCard({ listing, score, className }: ListingCardProps) {
             className="btn-primary w-full text-sm text-center block"
             target={listing.affiliateUrl ? "_blank" : undefined}
             rel={listing.affiliateUrl ? "noopener sponsored" : undefined}
+            onClick={listing.affiliateUrl ? handleAffiliateClick : undefined}
           >
             View Details
           </Link>

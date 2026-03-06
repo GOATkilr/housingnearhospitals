@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Building2, Clock, Armchair, Shield, Star, ArrowRight, DollarSign, CheckCircle2, HelpCircle } from "lucide-react";
-import { SITE_NAME, LAUNCH_METROS } from "@/lib/constants";
+import { SITE_NAME } from "@/lib/constants";
+import { getMetrosForNav } from "@/lib/queries";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
   description: "Complete guide to finding housing as a travel nurse. Tips on housing stipends, furnished rentals, short-term leases, neighborhood evaluation, and proximity to your hospital assignment.",
 };
 
-export default function TravelNurseGuidePage() {
+export default async function TravelNurseGuidePage() {
+  const metros = await getMetrosForNav();
   return (
     <div>
       <section className="bg-gradient-to-b from-brand-900 to-brand-800 text-white py-16">
@@ -294,14 +296,13 @@ export default function TravelNurseGuidePage() {
               nearby hospitals with proximity-scored listings.
             </p>
             <div className="grid sm:grid-cols-3 gap-4">
-              {LAUNCH_METROS.map((metro) => (
+              {metros.map((metro) => (
                 <Link
                   key={metro.slug}
                   href={`/city/${metro.slug}`}
                   className="bg-white rounded-xl border border-slate-200 p-4 card-hover block"
                 >
                   <h3 className="font-semibold text-slate-900">{metro.name}</h3>
-                  <p className="text-xs text-slate-500 mt-1">{metro.hospitalCount}+ hospitals</p>
                   <div className="flex items-center gap-1 mt-2 text-sm font-medium text-brand-700">
                     <span>Browse</span>
                     <ArrowRight className="w-3 h-3" />

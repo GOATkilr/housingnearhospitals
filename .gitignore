@@ -38,7 +38,8 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Data files (large CSVs)
+# Data files (large CSVs and API caches)
 data/*.csv
 data/*.json
+data/rentcast/
 !data/README.md

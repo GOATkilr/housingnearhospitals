@@ -39,12 +39,16 @@ interface SearchResultItem {
   };
 }
 
+const PAGE_SIZE = 20;
+
 export default function SearchPage() {
   const [allHospitals, setAllHospitals] = useState<Hospital[]>([]);
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [filters, setFilters] = useState<SearchFilters>({ sortBy: "score" });
   const [view, setView] = useState<"list" | "map">("list");
   const [results, setResults] = useState<SearchResultItem[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
   // Load all hospitals for search
@@ -55,10 +59,16 @@ export default function SearchPage() {
       .catch(() => {});
   }, []);
 
-  // Fetch search results when hospital or filters change
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [filters, selectedHospital]);
+
+  // Fetch search results when hospital, filters, or page change
   const fetchResults = useCallback(async () => {
     if (!selectedHospital) {
       setResults([]);
+      setTotal(0);
       return;
     }
     setLoading(true);
@@ -66,7 +76,8 @@ export default function SearchPage() {
     const params = new URLSearchParams({
       hospital_id: selectedHospital.id,
       sort: filters.sortBy ?? "score",
-      limit: "50",
+      limit: String(PAGE_SIZE),
+      page: String(page),
     });
     if (filters.maxPrice) params.set("max_price", String(filters.maxPrice));
     if (filters.minBedrooms !== undefined) params.set("min_bedrooms", String(filters.minBedrooms));
@@ -79,16 +90,20 @@ export default function SearchPage() {
       const r = await fetch(`/api/v1/search?${params}`);
       const data = await r.json();
       setResults(data.data ?? []);
+      setTotal(data.total ?? 0);
     } catch {
       setResults([]);
+      setTotal(0);
     } finally {
       setLoading(false);
     }
-  }, [selectedHospital, filters]);
+  }, [selectedHospital, filters, page]);
 
   useEffect(() => {
     fetchResults();
   }, [fetchResults]);
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -126,7 +141,7 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              <FilterPanel filters={filters} onChange={setFilters} />
+              <FilterPanel filters={filters} onChange={setFilters} hospitalId={selectedHospital.id} />
             </div>
 
             {/* Results */}
@@ -134,8 +149,13 @@ export default function SearchPage() {
               {/* Results header */}
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm text-slate-600">
-                  <strong>{results.length}</strong> listings near{" "}
+                  <strong>{total}</strong> listings near{" "}
                   <strong>{selectedHospital.name}</strong>
+                  {total > PAGE_SIZE && (
+                    <span className="text-slate-400 ml-1">
+                      (showing {(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, total)})
+                    </span>
+                  )}
                   {loading && <span className="ml-2 text-slate-400">Loading...</span>}
                 </p>
                 <div className="flex items-center gap-1 bg-white rounded-lg border border-slate-200 p-1">
@@ -155,15 +175,64 @@ export default function SearchPage() {
               </div>
 
               {results.length > 0 ? (
-                <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                  {results.map(({ listing, score }) => (
-                    <ListingCard
-                      key={listing.id}
-                      listing={listing as unknown as import("@/types").Listing}
-                      score={score as unknown as HospitalListingScore}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                    {results.map(({ listing, score }) => (
+                      <ListingCard
+                        key={listing.id}
+                        listing={listing as unknown as import("@/types").Listing}
+                        score={score as unknown as HospitalListingScore}
+                        hospitalId={selectedHospital.id}
+                        source="search"
+                      />
+                    ))}
+                  </div>
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 mt-8">
+                      <button
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </button>
+                      {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                        let pageNum: number;
+                        if (totalPages <= 7) {
+                          pageNum = i + 1;
+                        } else if (page <= 4) {
+                          pageNum = i + 1;
+                        } else if (page >= totalPages - 3) {
+                          pageNum = totalPages - 6 + i;
+                        } else {
+                          pageNum = page - 3 + i;
+                        }
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => setPage(pageNum)}
+                            className={`w-9 h-9 text-sm rounded-lg ${
+                              page === pageNum
+                                ? "bg-brand-600 text-white"
+                                : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                      <button
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                        className="px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : !loading ? (
                 <div className="text-center py-20 bg-white rounded-xl border border-slate-200">
                   <Building2 className="w-10 h-10 mx-auto mb-3 text-slate-300" />

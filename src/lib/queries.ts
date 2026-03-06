@@ -148,6 +148,20 @@ export async function getMetroBySlug(slug: string): Promise<Metro | null> {
   return rows.length > 0 ? rowToMetro(rows[0]) : null;
 }
 
+export async function getActiveMetroSlugs(): Promise<string[]> {
+  const rows = await sql`
+    SELECT slug FROM metros WHERE is_active = true ORDER BY name
+  `;
+  return rows.map((r) => r.slug as string);
+}
+
+export async function getMetrosForNav(): Promise<{ slug: string; name: string }[]> {
+  const rows = await sql`
+    SELECT slug, name FROM metros WHERE is_active = true ORDER BY name
+  `;
+  return rows.map((r) => ({ slug: r.slug as string, name: r.name as string }));
+}
+
 // ============================================================
 // HOSPITALS
 // ============================================================

@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { HOSPITAL_PIN_COLOR, LISTING_PIN_COLOR } from "@/lib/constants";
+import { trackMapInteraction } from "@/lib/analytics";
 import type { Hospital, Listing } from "@/types";
 
 interface MapViewProps {
@@ -33,6 +34,8 @@ export default function MapView({ token, center, zoom, hospitals, listings, metr
     });
 
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
+    map.on("moveend", () => trackMapInteraction({ action: "pan", metroSlug }));
+    map.on("zoomend", () => trackMapInteraction({ action: "zoom", metroSlug }));
     mapRef.current = map;
 
     return () => {
