@@ -226,10 +226,7 @@ async function main() {
     totalScores += await calculateForMetro(metro);
   }
 
-  // Refresh materialized view
-  console.log("\nRefreshing materialized view mv_search_results...");
-  await sql`REFRESH MATERIALIZED VIEW CONCURRENTLY mv_search_results`;
-  console.log("  Done.");
+  // Search queries use JOINs on base tables directly (MV removed to save storage).
 
   console.log(`\n=== COMPLETE: ${totalScores} score pairs calculated ===`);
 }

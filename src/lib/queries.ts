@@ -551,44 +551,49 @@ export async function searchListings(
   // So we'll use parameterized queries for the critical parts
   const rows = await sql`
     SELECT
-      listing_id, listing_title, property_type, bedrooms, bathrooms, sqft,
-      price_monthly, is_furnished, lease_min_months, allows_pets, has_parking,
-      has_in_unit_laundry, primary_image_url, source, affiliate_url, source_url,
-      listing_quality_score,
-      ST_Y(listing_location::geometry) AS listing_lat,
-      ST_X(listing_location::geometry) AS listing_lng,
-      hospital_id, hospital_name, hospital_slug,
-      straight_line_miles, drive_time_day_min, drive_time_night_min,
-      proximity_score, combined_score,
-      metro_slug, metro_name, metro_id,
-      neighborhood_name
-    FROM mv_search_results
-    WHERE hospital_id = ${hospitalId}
-      AND (${filters.maxPrice ?? null}::int IS NULL OR price_monthly <= ${filters.maxPrice ?? null})
-      AND (${filters.minBedrooms ?? null}::int IS NULL OR COALESCE(bedrooms, 0) >= ${filters.minBedrooms ?? null})
-      AND (${filters.isFurnished ? true : null}::bool IS NULL OR is_furnished = true)
-      AND (${filters.allowsPets ? true : null}::bool IS NULL OR allows_pets = true)
-      AND (${filters.hasParking ? true : null}::bool IS NULL OR has_parking = true)
-      AND (${filters.minScore ?? null}::int IS NULL OR proximity_score >= ${filters.minScore ?? null})
+      l.id AS listing_id, l.title AS listing_title, l.property_type, l.bedrooms, l.bathrooms, l.sqft,
+      l.price_monthly, l.is_furnished, l.lease_min_months, l.allows_pets, l.has_parking,
+      l.has_in_unit_laundry, l.primary_image_url, l.source, l.affiliate_url, l.source_url,
+      l.listing_quality_score,
+      ST_Y(l.location::geometry) AS listing_lat,
+      ST_X(l.location::geometry) AS listing_lng,
+      h.id AS hospital_id, h.name AS hospital_name, h.slug AS hospital_slug,
+      hls.straight_line_miles, hls.drive_time_day_min, hls.drive_time_night_min,
+      hls.proximity_score, hls.combined_score,
+      m.slug AS metro_slug, m.name AS metro_name, m.id AS metro_id,
+      n.name AS neighborhood_name
+    FROM hospital_listing_scores hls
+    JOIN hospitals h ON h.id = hls.hospital_id AND h.is_active = true
+    JOIN listings l ON l.id = hls.listing_id AND l.status = 'active' AND l.deleted_at IS NULL
+    JOIN metros m ON m.id = l.metro_id AND m.is_active = true
+    LEFT JOIN neighborhoods n ON n.id = l.neighborhood_id
+    WHERE hls.hospital_id = ${hospitalId}
+      AND (${filters.maxPrice ?? null}::int IS NULL OR l.price_monthly <= ${filters.maxPrice ?? null})
+      AND (${filters.minBedrooms ?? null}::int IS NULL OR COALESCE(l.bedrooms, 0) >= ${filters.minBedrooms ?? null})
+      AND (${filters.isFurnished ? true : null}::bool IS NULL OR l.is_furnished = true)
+      AND (${filters.allowsPets ? true : null}::bool IS NULL OR l.allows_pets = true)
+      AND (${filters.hasParking ? true : null}::bool IS NULL OR l.has_parking = true)
+      AND (${filters.minScore ?? null}::int IS NULL OR hls.proximity_score >= ${filters.minScore ?? null})
     ORDER BY
-      CASE WHEN ${sort} = 'price_asc' THEN price_monthly END ASC,
-      CASE WHEN ${sort} = 'price_desc' THEN price_monthly END DESC,
-      CASE WHEN ${sort} = 'distance' THEN straight_line_miles END ASC,
-      CASE WHEN ${sort} NOT IN ('price_asc', 'price_desc', 'distance') THEN COALESCE(combined_score, proximity_score) END DESC
+      CASE WHEN ${sort} = 'price_asc' THEN l.price_monthly END ASC,
+      CASE WHEN ${sort} = 'price_desc' THEN l.price_monthly END DESC,
+      CASE WHEN ${sort} = 'distance' THEN hls.straight_line_miles END ASC,
+      CASE WHEN ${sort} NOT IN ('price_asc', 'price_desc', 'distance') THEN COALESCE(hls.combined_score, hls.proximity_score) END DESC
     LIMIT ${limit} OFFSET ${offset}
   `;
 
   // Count query
   const countRows = await sql`
     SELECT COUNT(*)::int AS total
-    FROM mv_search_results
-    WHERE hospital_id = ${hospitalId}
-      AND (${filters.maxPrice ?? null}::int IS NULL OR price_monthly <= ${filters.maxPrice ?? null})
-      AND (${filters.minBedrooms ?? null}::int IS NULL OR COALESCE(bedrooms, 0) >= ${filters.minBedrooms ?? null})
-      AND (${filters.isFurnished ? true : null}::bool IS NULL OR is_furnished = true)
-      AND (${filters.allowsPets ? true : null}::bool IS NULL OR allows_pets = true)
-      AND (${filters.hasParking ? true : null}::bool IS NULL OR has_parking = true)
-      AND (${filters.minScore ?? null}::int IS NULL OR proximity_score >= ${filters.minScore ?? null})
+    FROM hospital_listing_scores hls
+    JOIN listings l ON l.id = hls.listing_id AND l.status = 'active' AND l.deleted_at IS NULL
+    WHERE hls.hospital_id = ${hospitalId}
+      AND (${filters.maxPrice ?? null}::int IS NULL OR l.price_monthly <= ${filters.maxPrice ?? null})
+      AND (${filters.minBedrooms ?? null}::int IS NULL OR COALESCE(l.bedrooms, 0) >= ${filters.minBedrooms ?? null})
+      AND (${filters.isFurnished ? true : null}::bool IS NULL OR l.is_furnished = true)
+      AND (${filters.allowsPets ? true : null}::bool IS NULL OR l.allows_pets = true)
+      AND (${filters.hasParking ? true : null}::bool IS NULL OR l.has_parking = true)
+      AND (${filters.minScore ?? null}::int IS NULL OR hls.proximity_score >= ${filters.minScore ?? null})
   `;
 
   const total = (countRows[0]?.total as number) ?? 0;
