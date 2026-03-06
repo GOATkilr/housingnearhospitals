@@ -28,8 +28,14 @@ if (!DATABASE_URL) {
 
 const sql = neon(DATABASE_URL);
 
-// Metro slug → metro DB info
-const METRO_SLUGS = ["nashville-tn", "houston-tx", "phoenix-az"];
+// Auto-discover metros from data/rentcast/ directory
+function getAvailableMetros(): string[] {
+  const rentcastDir = path.join(process.cwd(), "data", "rentcast");
+  if (!fs.existsSync(rentcastDir)) return [];
+  return fs.readdirSync(rentcastDir).filter((d) =>
+    fs.statSync(path.join(rentcastDir, d)).isDirectory()
+  );
+}
 
 interface ImportStats {
   total: number;
@@ -201,7 +207,7 @@ async function main() {
     ? args[args.indexOf("--metro") + 1]
     : null;
 
-  const metros = metroArg ? [metroArg] : METRO_SLUGS;
+  const metros = metroArg ? [metroArg] : getAvailableMetros();
 
   console.log("=== Import RentCast Listings ===\n");
 
