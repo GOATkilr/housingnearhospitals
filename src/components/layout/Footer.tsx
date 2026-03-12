@@ -47,6 +47,26 @@ export async function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/guides/best-cities-travel-nurses" className="text-sm hover:text-white transition-colors">
+                  Best Cities for Nurses
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/housing-near-teaching-hospitals" className="text-sm hover:text-white transition-colors">
+                  Teaching Hospitals
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/housing-near-va-hospitals" className="text-sm hover:text-white transition-colors">
+                  VA Hospitals
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/pet-friendly-housing-near-hospitals" className="text-sm hover:text-white transition-colors">
+                  Pet-Friendly Housing
+                </Link>
+              </li>
+              <li>
                 <Link href="/map" className="text-sm hover:text-white transition-colors">
                   Map Explorer
                 </Link>

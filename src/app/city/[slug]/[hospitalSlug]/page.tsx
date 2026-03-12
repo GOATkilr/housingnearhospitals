@@ -4,7 +4,7 @@ import {
   Building2, MapPin, Bed, Star, Phone, Globe, AlertCircle,
   GraduationCap, ArrowLeft, ExternalLink
 } from "lucide-react";
-import { getHospitalBySlug, getScoresForHospital, getAllHospitalSlugs, getMetroBySlug } from "@/lib/queries";
+import { getHospitalBySlug, getScoresForHospital, getAllHospitalSlugs, getMetroBySlug, getOtherHospitalsInMetro } from "@/lib/queries";
 import { HospitalListings } from "@/components/hospital/HospitalListings";
 import { TrackHospitalView } from "@/components/analytics/TrackPageView";
 import { formatNumber, formatPrice } from "@/lib/utils";
@@ -60,7 +60,10 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
     notFound();
   }
 
-  const scoredListings = await getScoresForHospital(hospital.id);
+  const [scoredListings, otherHospitals] = await Promise.all([
+    getScoresForHospital(hospital.id),
+    getOtherHospitalsInMetro(hospital.metroId, hospital.id, 6),
+  ]);
 
   // Compute listing stats
   const prices = scoredListings.map(({ listing }) => listing.priceMonthly).filter(Boolean);
@@ -258,6 +261,34 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
           )}
         </div>
       </section>
+
+      {/* Other hospitals in metro */}
+      {otherHospitals.length > 0 && (
+        <section className="py-10 bg-slate-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-xl font-bold text-slate-900 mb-6">
+              Other hospitals in {metro.name}
+            </h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {otherHospitals.map((h) => (
+                <Link
+                  key={h.id}
+                  href={`/city/${slug}/${h.slug}`}
+                  className="group bg-white rounded-xl border border-slate-200 p-4 card-hover block"
+                >
+                  <h3 className="font-semibold text-sm text-slate-900 group-hover:text-brand-700 transition-colors">
+                    {h.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 mt-2 text-xs text-slate-500">
+                    <span>{h.hospitalType}</span>
+                    {h.bedCount && <span>{formatNumber(h.bedCount)} beds</span>}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

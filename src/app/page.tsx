@@ -183,6 +183,69 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Guides / Resources */}
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl font-bold text-slate-900">Guides &amp; Resources</h2>
+            <p className="mt-3 text-slate-500">
+              In-depth guides to help you find the right housing for your healthcare career.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Link
+              href="/guides/travel-nurse-housing"
+              className="group bg-white rounded-xl border border-slate-200 p-5 card-hover block"
+            >
+              <Clock className="w-6 h-6 text-brand-600 mb-2" />
+              <h3 className="font-semibold text-slate-900 group-hover:text-brand-700 transition-colors">Travel Nurse Housing Guide</h3>
+              <p className="text-sm text-slate-500 mt-1">Stipends, furnished rentals, and neighborhoods.</p>
+              <div className="flex items-center gap-1 mt-3 text-sm font-medium text-brand-700">
+                <span>Read guide</span>
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+            <Link
+              href="/guides/best-cities-travel-nurses"
+              className="group bg-white rounded-xl border border-slate-200 p-5 card-hover block"
+            >
+              <TrendingUp className="w-6 h-6 text-emerald-600 mb-2" />
+              <h3 className="font-semibold text-slate-900 group-hover:text-brand-700 transition-colors">Best Cities for Travel Nurses</h3>
+              <p className="text-sm text-slate-500 mt-1">Compare metros by rent, hospitals, and more.</p>
+              <div className="flex items-center gap-1 mt-3 text-sm font-medium text-brand-700">
+                <span>See rankings</span>
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+            <Link
+              href="/guides/housing-near-teaching-hospitals"
+              className="group bg-white rounded-xl border border-slate-200 p-5 card-hover block"
+            >
+              <Building2 className="w-6 h-6 text-purple-600 mb-2" />
+              <h3 className="font-semibold text-slate-900 group-hover:text-brand-700 transition-colors">Teaching Hospitals</h3>
+              <p className="text-sm text-slate-500 mt-1">Housing for residents, fellows, and students.</p>
+              <div className="flex items-center gap-1 mt-3 text-sm font-medium text-brand-700">
+                <span>Read guide</span>
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+            <Link
+              href="/guides/pet-friendly-housing-near-hospitals"
+              className="group bg-white rounded-xl border border-slate-200 p-5 card-hover block"
+            >
+              <Shield className="w-6 h-6 text-pink-600 mb-2" />
+              <h3 className="font-semibold text-slate-900 group-hover:text-brand-700 transition-colors">Pet-Friendly Housing</h3>
+              <p className="text-sm text-slate-500 mt-1">Listings that welcome your furry companions.</p>
+              <div className="flex items-center gap-1 mt-3 text-sm font-medium text-brand-700">
+                <span>Read guide</span>
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="bg-brand-900 py-16">
         <div className="max-w-3xl mx-auto px-4 text-center">

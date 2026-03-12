@@ -645,6 +645,176 @@ export async function searchListings(
 }
 
 // ============================================================
+// STATE AGGREGATION
+// ============================================================
+
+export interface StateMetroSummary {
+  stateCode: string;
+  stateName: string;
+  metros: (Metro & { hospitalCount: number })[];
+}
+
+const STATE_NAMES: Record<string, string> = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+  CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+  HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+  KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+  MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi",
+  MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire",
+  NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina",
+  ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania",
+  RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee",
+  TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington",
+  WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "District of Columbia",
+};
+
+export function getStateName(stateCode: string): string {
+  return STATE_NAMES[stateCode.toUpperCase()] ?? stateCode;
+}
+
+export async function getStateList(): Promise<{ stateCode: string; stateName: string; metroCount: number; hospitalCount: number }[]> {
+  const rows = await sql`
+    SELECT
+      m.state_code,
+      COUNT(DISTINCT m.id)::int AS metro_count,
+      COUNT(DISTINCT h.id)::int AS hospital_count
+    FROM metros m
+    LEFT JOIN hospitals h ON h.metro_id = m.id AND h.is_active = true
+    WHERE m.is_active = true
+    GROUP BY m.state_code
+    ORDER BY m.state_code
+  `;
+  return rows.map((r) => ({
+    stateCode: r.state_code as string,
+    stateName: getStateName(r.state_code as string),
+    metroCount: r.metro_count as number,
+    hospitalCount: r.hospital_count as number,
+  }));
+}
+
+export async function getMetrosByState(stateCode: string): Promise<(Metro & { hospitalCount: number })[]> {
+  const rows = await sql`
+    SELECT
+      m.*, ST_Y(m.center::geometry) AS lat, ST_X(m.center::geometry) AS lng,
+      COUNT(h.id)::int AS hospital_count
+    FROM metros m
+    LEFT JOIN hospitals h ON h.metro_id = m.id AND h.is_active = true
+    WHERE m.is_active = true AND UPPER(m.state_code) = ${stateCode.toUpperCase()}
+    GROUP BY m.id
+    ORDER BY m.name
+  `;
+  return rows.map((r) => ({
+    ...rowToMetro(r),
+    hospitalCount: r.hospital_count as number,
+  }));
+}
+
+export async function getActiveStateCodes(): Promise<string[]> {
+  const rows = await sql`
+    SELECT DISTINCT state_code FROM metros WHERE is_active = true ORDER BY state_code
+  `;
+  return rows.map((r) => r.state_code as string);
+}
+
+// ============================================================
+// GUIDE-SPECIFIC QUERIES
+// ============================================================
+
+export async function getTeachingHospitals(): Promise<(Hospital & { metroName: string; metroSlug: string })[]> {
+  const rows = await sql`
+    SELECT h.*, ST_Y(h.location::geometry) AS lat, ST_X(h.location::geometry) AS lng,
+      m.name AS metro_name, m.slug AS metro_slug
+    FROM hospitals h
+    JOIN metros m ON m.id = h.metro_id AND m.is_active = true
+    WHERE h.is_active = true AND h.teaching_status = 'Major'
+    ORDER BY h.name
+  `;
+  return rows.map((r) => ({
+    ...rowToHospital(r),
+    metroName: r.metro_name as string,
+    metroSlug: r.metro_slug as string,
+  }));
+}
+
+export async function getVAHospitals(): Promise<(Hospital & { metroName: string; metroSlug: string })[]> {
+  const rows = await sql`
+    SELECT h.*, ST_Y(h.location::geometry) AS lat, ST_X(h.location::geometry) AS lng,
+      m.name AS metro_name, m.slug AS metro_slug
+    FROM hospitals h
+    JOIN metros m ON m.id = h.metro_id AND m.is_active = true
+    WHERE h.is_active = true AND h.hospital_type = 'VA'
+    ORDER BY h.name
+  `;
+  return rows.map((r) => ({
+    ...rowToHospital(r),
+    metroName: r.metro_name as string,
+    metroSlug: r.metro_slug as string,
+  }));
+}
+
+export async function getPetFriendlyListingCount(): Promise<number> {
+  const rows = await sql`
+    SELECT COUNT(*)::int AS count FROM listings
+    WHERE status = 'active' AND deleted_at IS NULL AND allows_pets = true
+  `;
+  return (rows[0]?.count as number) ?? 0;
+}
+
+export async function getPetFriendlyMetroStats(): Promise<{ metroName: string; metroSlug: string; count: number; avgRent: number }[]> {
+  const rows = await sql`
+    SELECT m.name AS metro_name, m.slug AS metro_slug,
+      COUNT(l.id)::int AS count,
+      ROUND(AVG(l.price_monthly))::int AS avg_rent
+    FROM listings l
+    JOIN metros m ON m.id = l.metro_id AND m.is_active = true
+    WHERE l.status = 'active' AND l.deleted_at IS NULL AND l.allows_pets = true
+    GROUP BY m.id, m.name, m.slug
+    ORDER BY count DESC
+  `;
+  return rows.map((r) => ({
+    metroName: r.metro_name as string,
+    metroSlug: r.metro_slug as string,
+    count: r.count as number,
+    avgRent: r.avg_rent as number,
+  }));
+}
+
+export async function getOtherHospitalsInMetro(
+  metroId: string,
+  excludeHospitalId: string,
+  limit = 6
+): Promise<Hospital[]> {
+  const rows = await sql`
+    SELECT *, ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lng
+    FROM hospitals
+    WHERE metro_id = ${metroId} AND id != ${excludeHospitalId} AND is_active = true
+    ORDER BY bed_count DESC NULLS LAST
+    LIMIT ${limit}
+  `;
+  return rows.map(rowToHospital);
+}
+
+export async function getMetrosWithStats(): Promise<(Metro & { hospitalCount: number; listingCount: number })[]> {
+  const rows = await sql`
+    SELECT
+      m.*, ST_Y(m.center::geometry) AS lat, ST_X(m.center::geometry) AS lng,
+      COUNT(DISTINCT h.id)::int AS hospital_count,
+      COUNT(DISTINCT l.id)::int AS listing_count
+    FROM metros m
+    LEFT JOIN hospitals h ON h.metro_id = m.id AND h.is_active = true
+    LEFT JOIN listings l ON l.metro_id = m.id AND l.status = 'active' AND l.deleted_at IS NULL
+    WHERE m.is_active = true
+    GROUP BY m.id
+    ORDER BY m.name
+  `;
+  return rows.map((r) => ({
+    ...rowToMetro(r),
+    hospitalCount: r.hospital_count as number,
+    listingCount: r.listing_count as number,
+  }));
+}
+
+// ============================================================
 // ADMIN COUNTS
 // ============================================================
 

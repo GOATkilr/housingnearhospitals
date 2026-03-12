@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { MapPin, Users, DollarSign, Building2 } from "lucide-react";
-import { getHospitalsByMetro, getMetroBySlug, getActiveMetroSlugs } from "@/lib/queries";
+import { getHospitalsByMetro, getMetroBySlug, getActiveMetroSlugs, getStateName } from "@/lib/queries";
+import Link from "next/link";
 import { HospitalCard } from "@/components/hospital/HospitalCard";
 import { formatNumber, formatPrice } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -65,6 +66,12 @@ export default async function CityPage({ params }: CityPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-blue-300 text-sm mb-4">
             <MapPin className="w-4 h-4" />
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <span>/</span>
+            <Link href={`/state/${metro.stateCode}`} className="hover:text-white transition-colors">
+              {getStateName(metro.stateCode)}
+            </Link>
+            <span>/</span>
             <span>{metro.name}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold">
@@ -110,6 +117,38 @@ export default async function CityPage({ params }: CityPageProps) {
               <p>Hospital data is being imported. Check back soon.</p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Guides */}
+      <section className="py-12 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">
+            Guides for {metro.name}
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Link
+              href="/guides/travel-nurse-housing"
+              className="bg-white rounded-xl border border-slate-200 p-5 card-hover block"
+            >
+              <h3 className="font-semibold text-slate-900">Travel Nurse Housing Guide</h3>
+              <p className="text-sm text-slate-500 mt-1">Tips on stipends, furnished rentals, and neighborhoods.</p>
+            </Link>
+            <Link
+              href="/guides/best-cities-travel-nurses"
+              className="bg-white rounded-xl border border-slate-200 p-5 card-hover block"
+            >
+              <h3 className="font-semibold text-slate-900">Best Cities for Travel Nurses</h3>
+              <p className="text-sm text-slate-500 mt-1">Compare metros by rent, hospital density, and more.</p>
+            </Link>
+            <Link
+              href="/guides/housing-near-teaching-hospitals"
+              className="bg-white rounded-xl border border-slate-200 p-5 card-hover block"
+            >
+              <h3 className="font-semibold text-slate-900">Housing Near Teaching Hospitals</h3>
+              <p className="text-sm text-slate-500 mt-1">Find housing near major teaching hospitals.</p>
+            </Link>
+          </div>
         </div>
       </section>
     </div>
