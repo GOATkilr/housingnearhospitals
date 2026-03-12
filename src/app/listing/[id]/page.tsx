@@ -4,7 +4,7 @@ import {
   Building2, MapPin, Bed, Bath, Maximize, Armchair, PawPrint, Car,
   ArrowLeft, Sparkles, ExternalLink
 } from "lucide-react";
-import { getListingById, getScoresForListing, getAllListingIds, getMetroById } from "@/lib/queries";
+import { getListingById, getScoresForListing, getMetroById } from "@/lib/queries";
 import { sql } from "@/lib/db";
 import { ScoreRing } from "@/components/score/ScoreRing";
 import { CommuteBar } from "@/components/score/CommuteBar";
@@ -16,11 +16,6 @@ export const revalidate = 86400; // Revalidate daily
 
 interface ListingPageProps {
   params: { id: string };
-}
-
-export async function generateStaticParams() {
-  const ids = await getAllListingIds();
-  return ids.map((id) => ({ id }));
 }
 
 export async function generateMetadata({ params }: ListingPageProps): Promise<Metadata> {

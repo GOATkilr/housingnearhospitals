@@ -4,7 +4,7 @@ import {
   Building2, MapPin, Bed, Star, Phone, Globe, AlertCircle,
   GraduationCap, ArrowLeft, ExternalLink
 } from "lucide-react";
-import { getHospitalBySlug, getScoresForHospital, getAllHospitalSlugs, getMetroBySlug, getOtherHospitalsInMetro } from "@/lib/queries";
+import { getHospitalBySlug, getScoresForHospital, getMetroBySlug, getOtherHospitalsInMetro } from "@/lib/queries";
 import { HospitalListings } from "@/components/hospital/HospitalListings";
 import { TrackHospitalView } from "@/components/analytics/TrackPageView";
 import { formatNumber, formatPrice } from "@/lib/utils";
@@ -14,14 +14,6 @@ export const revalidate = 3600; // Revalidate hourly
 
 interface HospitalPageProps {
   params: { slug: string; hospitalSlug: string };
-}
-
-export async function generateStaticParams() {
-  const slugs = await getAllHospitalSlugs();
-  return slugs.map((s) => ({
-    slug: s.metroSlug,
-    hospitalSlug: s.slug,
-  }));
 }
 
 export async function generateMetadata({ params }: HospitalPageProps): Promise<Metadata> {
