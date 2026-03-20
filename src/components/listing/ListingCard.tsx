@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
 import { Bed, Bath, Maximize, Armchair, PawPrint, Car, Sparkles } from "lucide-react";
 import type { Listing, HospitalListingScore } from "@/types";
 import { ScoreRing } from "@/components/score/ScoreRing";
@@ -38,14 +40,21 @@ export function ListingCard({ listing, score, hospitalId, source, className }: L
     trackAffiliateClick({ listingId: listing.id, hospitalId: resolvedHospitalId, source: source ?? "listing_card" });
   }
 
+  const [imgError, setImgError] = useState(false);
+
   return (
     <div className={cn("bg-white rounded-xl border border-slate-200 overflow-hidden card-hover", className)}>
       {/* Image */}
       <div className="relative h-48 bg-slate-100">
-        {listing.primaryImageUrl ? (
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${listing.primaryImageUrl})` }}
+        {listing.primaryImageUrl && !imgError ? (
+          <Image
+            src={listing.primaryImageUrl}
+            alt={listing.title}
+            fill
+            unoptimized
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={() => setImgError(true)}
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-slate-300">

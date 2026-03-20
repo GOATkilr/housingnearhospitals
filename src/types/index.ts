@@ -41,6 +41,7 @@ export interface Hospital {
   cmsOverallRating?: number;
   cmsPatientExp?: number;
   cmsSafetyRating?: number;
+  imageUrl?: string;
   isActive: boolean;
 }
 

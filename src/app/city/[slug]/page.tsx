@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { MapPin, Users, DollarSign, Building2 } from "lucide-react";
 import { getHospitalsByMetro, getMetroBySlug, getActiveMetroSlugs, getStateName } from "@/lib/queries";
 import Link from "next/link";
@@ -62,8 +63,17 @@ export default async function CityPage({ params }: CityPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
       {/* Hero */}
-      <section className="bg-gradient-to-b from-brand-900 to-brand-800 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative bg-gradient-to-b from-brand-900 to-brand-800 text-white py-16 overflow-hidden">
+        {/* City background image */}
+        <Image
+          src={`/images/cities/${metro.slug}.jpg`}
+          alt=""
+          fill
+          className="object-cover opacity-20"
+          sizes="100vw"
+          priority
+        />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-blue-300 text-sm mb-4">
             <MapPin className="w-4 h-4" />
             <Link href="/" className="hover:text-white transition-colors">Home</Link>

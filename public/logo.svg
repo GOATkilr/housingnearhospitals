@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- House shape -->
+  <path d="M60 12L10 52V108H50V78H70V108H110V52L60 12Z" fill="#10b981" opacity="0.9"/>
+  <!-- Hospital cross -->
+  <rect x="48" y="30" width="24" height="8" rx="2" fill="#1e40af"/>
+  <rect x="56" y="22" width="8" height="24" rx="2" fill="#1e40af"/>
+  <!-- Window details -->
+  <rect x="28" y="62" width="16" height="16" rx="3" fill="white" opacity="0.5"/>
+  <rect x="76" y="62" width="16" height="16" rx="3" fill="white" opacity="0.5"/>
+</svg>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Building2, Bed, Star, AlertCircle, GraduationCap } from "lucide-react";
 import type { Hospital } from "@/types";
 import { cn } from "@/lib/utils";
@@ -22,9 +23,20 @@ export function HospitalCard({ hospital, metroSlug, className }: HospitalCardPro
       )}
     >
       <div className="flex items-start gap-4">
-        {/* Icon */}
-        <div className="w-12 h-12 bg-brand-50 rounded-lg flex items-center justify-center flex-shrink-0">
-          <Building2 className="w-6 h-6 text-brand-700" />
+        {/* Thumbnail */}
+        <div className="w-12 h-12 bg-brand-50 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden relative">
+          {hospital.imageUrl ? (
+            <Image
+              src={hospital.imageUrl}
+              alt={hospital.name}
+              fill
+              unoptimized
+              className="object-cover"
+              sizes="48px"
+            />
+          ) : (
+            <Building2 className="w-6 h-6 text-brand-700" />
+          )}
         </div>
 
         <div className="flex-1 min-w-0">

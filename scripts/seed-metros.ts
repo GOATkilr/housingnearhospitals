@@ -56,6 +56,20 @@ const METROS: MetroSeed[] = [
   { slug: "orlando-fl", name: "Orlando, FL", stateCode: "FL", lat: 28.5383, lng: -81.3792, radiusMiles: 25, circuityFactor: 1.30, timezone: "America/New_York", metroPop: 2700000, avgRent1br: 1500 },
   { slug: "charlotte-nc", name: "Charlotte, NC", stateCode: "NC", lat: 35.2271, lng: -80.8431, radiusMiles: 25, circuityFactor: 1.30, timezone: "America/New_York", metroPop: 2700000, avgRent1br: 1400 },
   { slug: "tampa-fl", name: "Tampa, FL", stateCode: "FL", lat: 27.9506, lng: -82.4572, radiusMiles: 25, circuityFactor: 1.30, timezone: "America/New_York", metroPop: 3200000, avgRent1br: 1450 },
+
+  // Wave 3 — 12 new metros
+  { slug: "new-york-ny", name: "New York, NY", stateCode: "NY", lat: 40.7128, lng: -74.0060, radiusMiles: 20, circuityFactor: 1.50, timezone: "America/New_York", metroPop: 20100000, avgRent1br: 3000 },
+  { slug: "washington-dc", name: "Washington, DC", stateCode: "DC", lat: 38.9072, lng: -77.0369, radiusMiles: 25, circuityFactor: 1.40, timezone: "America/New_York", metroPop: 6300000, avgRent1br: 2200 },
+  { slug: "baltimore-md", name: "Baltimore, MD", stateCode: "MD", lat: 39.2904, lng: -76.6122, radiusMiles: 25, circuityFactor: 1.35, timezone: "America/New_York", metroPop: 2800000, avgRent1br: 1300 },
+  { slug: "detroit-mi", name: "Detroit, MI", stateCode: "MI", lat: 42.3314, lng: -83.0458, radiusMiles: 25, circuityFactor: 1.35, timezone: "America/Detroit", metroPop: 4300000, avgRent1br: 1100 },
+  { slug: "san-antonio-tx", name: "San Antonio, TX", stateCode: "TX", lat: 29.4241, lng: -98.4936, radiusMiles: 25, circuityFactor: 1.30, timezone: "America/Chicago", metroPop: 2600000, avgRent1br: 1100 },
+  { slug: "austin-tx", name: "Austin, TX", stateCode: "TX", lat: 30.2672, lng: -97.7431, radiusMiles: 25, circuityFactor: 1.30, timezone: "America/Chicago", metroPop: 2300000, avgRent1br: 1500 },
+  { slug: "portland-or", name: "Portland, OR", stateCode: "OR", lat: 45.5152, lng: -122.6784, radiusMiles: 25, circuityFactor: 1.35, timezone: "America/Los_Angeles", metroPop: 2500000, avgRent1br: 1600 },
+  { slug: "st-louis-mo", name: "St. Louis, MO", stateCode: "MO", lat: 38.6270, lng: -90.1994, radiusMiles: 25, circuityFactor: 1.30, timezone: "America/Chicago", metroPop: 2800000, avgRent1br: 1000 },
+  { slug: "pittsburgh-pa", name: "Pittsburgh, PA", stateCode: "PA", lat: 40.4406, lng: -79.9959, radiusMiles: 25, circuityFactor: 1.40, timezone: "America/New_York", metroPop: 2400000, avgRent1br: 1200 },
+  { slug: "raleigh-nc", name: "Raleigh, NC", stateCode: "NC", lat: 35.7796, lng: -78.6382, radiusMiles: 25, circuityFactor: 1.30, timezone: "America/New_York", metroPop: 2000000, avgRent1br: 1400 },
+  { slug: "columbus-oh", name: "Columbus, OH", stateCode: "OH", lat: 39.9612, lng: -82.9988, radiusMiles: 25, circuityFactor: 1.30, timezone: "America/New_York", metroPop: 2100000, avgRent1br: 1200 },
+  { slug: "cleveland-oh", name: "Cleveland, OH", stateCode: "OH", lat: 41.4993, lng: -81.6944, radiusMiles: 25, circuityFactor: 1.35, timezone: "America/New_York", metroPop: 2100000, avgRent1br: 1000 },
 ];
 
 async function main() {

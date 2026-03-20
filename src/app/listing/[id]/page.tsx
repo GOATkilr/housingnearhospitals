@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Building2, MapPin, Bed, Bath, Maximize, Armchair, PawPrint, Car,
   ArrowLeft, Sparkles, ExternalLink
@@ -109,11 +110,18 @@ export default async function ListingPage({ params }: ListingPageProps) {
           {/* Main content */}
           <div className="space-y-6">
             {/* Listing image */}
-            <div
-              className="bg-slate-100 rounded-xl h-72 bg-cover bg-center"
-              style={{ backgroundImage: listing.primaryImageUrl ? `url(${listing.primaryImageUrl})` : undefined }}
-            >
-              {!listing.primaryImageUrl && (
+            <div className="relative bg-slate-100 rounded-xl h-72 overflow-hidden">
+              {listing.primaryImageUrl ? (
+                <Image
+                  src={listing.primaryImageUrl}
+                  alt={listing.title}
+                  fill
+                  priority
+                  unoptimized
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 800px"
+                />
+              ) : (
                 <div className="flex items-center justify-center h-full">
                   <Building2 className="w-16 h-16 text-slate-300" />
                 </div>
@@ -283,11 +291,19 @@ async function SimilarListings({
             className="block bg-white rounded-xl border border-slate-200 overflow-hidden card-hover"
           >
             <div className="relative h-36 bg-slate-100">
-              {r.primary_image_url && (
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${r.primary_image_url})` }}
+              {r.primary_image_url ? (
+                <Image
+                  src={r.primary_image_url as string}
+                  alt={r.title as string}
+                  fill
+                  unoptimized
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 33vw"
                 />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-slate-300">
+                  <Building2 className="w-10 h-10" />
+                </div>
               )}
               <div className="absolute bottom-2 left-2">
                 <span className="bg-slate-900/80 text-white px-2 py-1 rounded-lg text-sm font-bold backdrop-blur-sm">
