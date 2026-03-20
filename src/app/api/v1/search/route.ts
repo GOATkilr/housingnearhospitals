@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getHospitalById, searchListings } from "@/lib/queries";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/v1/search
  *

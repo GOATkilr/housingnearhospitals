@@ -402,7 +402,7 @@ async function main() {
   fs.mkdirSync(cacheBaseDir, { recursive: true });
 
   let uncachedCount = 0;
-  for (const zip of zipToMetro.keys()) {
+  for (const zip of Array.from(zipToMetro.keys())) {
     if (!isCacheValid(getCachePath(cacheBaseDir, zip))) uncachedCount++;
   }
 

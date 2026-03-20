@@ -6,6 +6,7 @@
  *   2. Import/upsert into database
  *   3. Calculate proximity scores
  *   4. Expire stale listings (>90 days without update)
+ *   5. Fetch market data from RentCast (cached)
  *
  * Usage:
  *   npx tsx scripts/refresh-listings-pipeline.ts
@@ -103,6 +104,9 @@ async function main() {
 
   // Step 4: Expire stale
   await expireStaleListings();
+
+  // Step 5: Fetch market data
+  run("Fetch market data", `npx tsx scripts/fetch-market-data.ts${metroFlag}`);
 
   // Summary
   await showSummary();
