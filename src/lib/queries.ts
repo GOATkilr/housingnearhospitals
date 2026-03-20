@@ -57,6 +57,7 @@ function rowToHospital(r: Record<string, unknown>): Hospital {
     cmsOverallRating: r.cms_overall_rating as number | undefined,
     cmsPatientExp: r.cms_patient_exp as number | undefined,
     cmsSafetyRating: r.cms_safety_rating as number | undefined,
+    imageUrl: r.image_url as string | undefined,
     isActive: r.is_active as boolean,
   };
 }
@@ -812,6 +813,56 @@ export async function getMetrosWithStats(): Promise<(Metro & { hospitalCount: nu
     hospitalCount: r.hospital_count as number,
     listingCount: r.listing_count as number,
   }));
+}
+
+// ============================================================
+// MARKET DATA
+// ============================================================
+
+export interface MarketDataSummary {
+  medianRent: number | null;
+  rentStudio: number | null;
+  rent1br: number | null;
+  rent2br: number | null;
+  rent3br: number | null;
+  rent4br: number | null;
+  avgSqft: number | null;
+  vacancyRate: number | null;
+  listingsCount: number | null;
+  zipCount: number;
+}
+
+export async function getMarketDataNearHospital(zipCode: string): Promise<MarketDataSummary | null> {
+  const rows = await sql`
+    SELECT
+      AVG(median_rent)::int AS median_rent,
+      AVG(rent_studio)::int AS rent_studio,
+      AVG(rent_1br)::int AS rent_1br,
+      AVG(rent_2br)::int AS rent_2br,
+      AVG(rent_3br)::int AS rent_3br,
+      AVG(rent_4br)::int AS rent_4br,
+      AVG(avg_sqft)::int AS avg_sqft,
+      AVG(vacancy_rate)::numeric(5,2) AS vacancy_rate,
+      SUM(listings_count)::int AS listings_count,
+      COUNT(*)::int AS zip_count
+    FROM market_data
+    WHERE zip_code = ${zipCode}
+  `;
+
+  if (!rows.length || !rows[0].median_rent) return null;
+
+  return {
+    medianRent: rows[0].median_rent as number | null,
+    rentStudio: rows[0].rent_studio as number | null,
+    rent1br: rows[0].rent_1br as number | null,
+    rent2br: rows[0].rent_2br as number | null,
+    rent3br: rows[0].rent_3br as number | null,
+    rent4br: rows[0].rent_4br as number | null,
+    avgSqft: rows[0].avg_sqft as number | null,
+    vacancyRate: rows[0].vacancy_rate ? Number(rows[0].vacancy_rate) : null,
+    listingsCount: rows[0].listings_count as number | null,
+    zipCount: rows[0].zip_count as number,
+  };
 }
 
 // ============================================================

@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Building2, MapPin, Bed, Star, Phone, Globe, AlertCircle,
   GraduationCap, ArrowLeft, ExternalLink
 } from "lucide-react";
-import { getHospitalBySlug, getScoresForHospital, getMetroBySlug, getOtherHospitalsInMetro } from "@/lib/queries";
+import { getHospitalBySlug, getScoresForHospital, getMetroBySlug, getOtherHospitalsInMetro, getMarketDataNearHospital } from "@/lib/queries";
 import { HospitalListings } from "@/components/hospital/HospitalListings";
+import { RentMarketData } from "@/components/hospital/RentMarketData";
 import { TrackHospitalView } from "@/components/analytics/TrackPageView";
 import { formatNumber, formatPrice } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -56,6 +58,8 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
     getScoresForHospital(hospital.id),
     getOtherHospitalsInMetro(hospital.metroId, hospital.id, 6),
   ]);
+
+  const marketData = hospital.zipCode ? await getMarketDataNearHospital(hospital.zipCode) : null;
 
   // Compute listing stats
   const prices = scoredListings.map(({ listing }) => listing.priceMonthly).filter(Boolean);
@@ -124,6 +128,20 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
           </Link>
 
           <div className="flex flex-col md:flex-row md:items-start gap-6">
+            {/* Hospital satellite image */}
+            {hospital.imageUrl && (
+              <div className="w-full md:w-48 h-36 md:h-36 rounded-xl overflow-hidden relative flex-shrink-0">
+                <Image
+                  src={hospital.imageUrl}
+                  alt={`Aerial view of ${hospital.name}`}
+                  fill
+                  unoptimized
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 192px"
+                />
+              </div>
+            )}
             {/* Hospital info */}
             <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl font-bold">{hospital.name}</h1>
@@ -228,6 +246,15 @@ export default async function HospitalPage({ params }: HospitalPageProps) {
             </div>
           </div>
         </section>
+      )}
+
+      {/* Rent Market Data */}
+      {marketData && (
+        <RentMarketData
+          hospitalName={hospital.name}
+          marketData={marketData}
+          metroAvgRent1br={metro.avgRent1br}
+        />
       )}
 
       {/* Listings */}
