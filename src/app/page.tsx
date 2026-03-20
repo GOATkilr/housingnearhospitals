@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Building2, MapPin, Star, ArrowRight, Shield, Clock, TrendingUp } from "lucide-react";
 import { SITE_TAGLINE } from "@/lib/constants";
 import { HospitalSearch } from "@/components/search/HospitalSearch";
@@ -92,7 +93,7 @@ export default function HomePage() {
             <StepCard
               number={1}
               title="Pick your hospital"
-              description="Search from our database of hospitals across Nashville, Houston, and Phoenix. We know every facility."
+              description="Search from our database of hospitals across 25+ major metros. We cover every major healthcare market."
               icon={Building2}
             />
             <StepCard
@@ -117,7 +118,7 @@ export default function HomePage() {
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold text-slate-900">Explore cities</h2>
             <p className="mt-3 text-slate-500">
-              We&apos;re launching in three major healthcare markets.
+              Browse hospitals and housing in major healthcare markets across the country.
             </p>
           </div>
 
@@ -128,8 +129,17 @@ export default function HomePage() {
                 href={`/city/${metro.slug}`}
                 className="group bg-white rounded-xl border border-slate-200 overflow-hidden card-hover"
               >
-                <div className="h-40 bg-gradient-to-br from-brand-700 to-brand-900 flex items-center justify-center">
-                  <MapPin className="w-12 h-12 text-white/30" />
+                <div className="relative h-40 bg-gradient-to-br from-brand-700 to-brand-900 flex items-center justify-center">
+                  <Image
+                    src={`/images/cities/${metro.slug}.jpg`}
+                    alt={metro.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+                  <MapPin className="w-12 h-12 text-white/30 relative z-10" />
                 </div>
                 <div className="p-5">
                   <h3 className="text-xl font-bold text-slate-900 group-hover:text-brand-700 transition-colors">
